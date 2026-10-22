@@ -223,8 +223,9 @@ export function Film() {
     raf.current = requestAnimationFrame(step);
   };
 
+  // data-hide-back-to-top: the film's own controls sit in the corner the back-to-top button uses.
   return (
-    <div ref={filmRef} data-film="" className="relative" style={{ height: `${FILM_VH}vh` }}>
+    <div ref={filmRef} data-film="" data-hide-back-to-top="" className="relative" style={{ height: `${FILM_VH}vh` }}>
       <div ref={stageRef} className="cine-stage sticky top-0 h-screen overflow-hidden text-scene-fg">
         <Backdrop p={p} orbit={orbit} />
         <LightLines p={p} />

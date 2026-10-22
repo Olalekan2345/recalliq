@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Activity, BrainCircuit, CircleDollarSign, FlaskConical, History, LogOut, Menu, Settings, UserRound, Wrench, X } from "lucide-react";
 import { authClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
+import { BackToTop } from "@/components/shared/back-to-top";
 import { Logo } from "@/components/shared/layout-bits";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { WalletConnectButton } from "@/components/wallet/connect-button";
@@ -203,8 +204,10 @@ export function AppShell({ user, children }: { user: { name: string; email: stri
             to keep your history.
           </div>
         )}
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-8 md:py-10">{children}</main>
+        {/* Extra room at the end so the last controls (e.g. the follow-up composer) scroll clear of the back-to-top button. */}
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 md:px-8 md:pt-10">{children}</main>
       </div>
+      <BackToTop />
     </div>
   );
 }

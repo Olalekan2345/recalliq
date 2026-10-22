@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
  */
 export const MASCOTS = {
   hoodie: { w: 480, h: 406, alt: "The RecallIQ walrus in a RecallIQ hoodie, giving a peace sign" },
+  head: { w: 220, h: 220, alt: "The RecallIQ walrus, winking" },
   smart: { w: 151, h: 141, alt: "The RecallIQ walrus holding a glowing memory orb" },
   "recalliq-white": { w: 206, h: 236, alt: "The RecallIQ walrus in a white RecallIQ hoodie" },
   tatum: { w: 202, h: 236, alt: "The RecallIQ walrus in a Tatum polo" },

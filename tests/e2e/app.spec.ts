@@ -89,6 +89,18 @@ test("Inside RecallIQ reads as plain chapters with reduced motion", async ({ pag
   await expect(page.getByRole("link", { name: "Explore RecallIQ" })).toHaveAttribute("href", "/workspace");
 });
 
+test("back to top appears on long pages and returns to the heading", async ({ page }) => {
+  await gotoReady(page, "/");
+  const button = page.getByRole("button", { name: "Back to top" });
+  await expect(button).toBeHidden();
+  await page.locator("#faq").scrollIntoViewIfNeeded();
+  await expect(button).toBeVisible();
+  await button.click();
+  await expect.poll(() => page.evaluate(() => window.scrollY), { timeout: 10_000 }).toBeLessThan(5);
+  await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
+  await expect(button).toBeHidden();
+});
+
 test("mobile navigation drawer opens and closes with Escape", async ({ page }) => {
   await signUp(page);
   const open = page.getByRole("button", { name: "Open navigation" });
@@ -169,7 +181,8 @@ test("starting an investigation shows live backend activity (requires a configur
   await page.getByLabel("What should RecallIQ investigate?").fill("What is the current checkpoint height on Sui Mainnet, and what does a checkpoint contain?");
   await page.getByRole("button", { name: "Investigate" }).click();
   await page.waitForURL("**/workspace/run/**");
-  await expect(page.getByText("Agent activity")).toBeVisible();
+  // The run page renders a freshly created run from the database; allow for a busy server.
+  await expect(page.getByText("Agent activity")).toBeVisible({ timeout: 15_000 });
   // Both steps appear once the worker picks the run up; either proves real backend activity.
   await expect(page.getByText(/Understanding the request|Investigation queued/).first()).toBeVisible({ timeout: 30_000 });
 });

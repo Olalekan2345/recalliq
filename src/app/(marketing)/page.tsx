@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { BackToTop } from "@/components/shared/back-to-top";
 import { HealthBadge } from "@/components/shared/status";
 import { Logo } from "@/components/shared/layout-bits";
 import { MotionProvider } from "@/components/motion/motion-provider";
@@ -208,6 +209,7 @@ export default async function LandingPage() {
             </p>
           </div>
         </footer>
+        <BackToTop />
       </div>
     </MotionProvider>
   );

@@ -128,6 +128,8 @@ writeFileSync(
 // Crops are inset a few pixels inside each card's border and never upscaled.
 const MASCOTS: Record<string, [number, number, number, number]> = {
   hoodie: [492, 4, 972, 410],
+  // The hoodie walrus's face (visor, eyes and wink stay inside a circle): the back-to-top button's avatar.
+  head: [640, 4, 860, 224],
   smart: [997, 162, 1148, 303],
   "recalliq-white": [16, 418, 222, 654],
   tatum: [238, 418, 440, 654],

@@ -20,7 +20,7 @@ Creative direction: a bright, premium AI studio with a warm mascot: frosted whit
 ## Mascot
 
 - Source: `assets/brand/mascot-sheet.png` (approved sheet). Crops in `public/brand/mascots/*.webp` keep their own scene backgrounds: they are framed artwork, never cut out, and never shown above their native size.
-- In use, selectively: the Q emblem in the hero, the film and the final call to action; `hoodie` (sign-in / sign-up panel); `developer`, the "IQ" walrus (the AI pipeline section); `walrus` (Walrus Memory section and built-with); `tatum` (blockchain data, built-with); `business` (x402 settlement, built-with); `agent` (first investigations), `smart` (empty Memory Vault), `hackathon` (empty Learning Lab).
+- In use, selectively: the Q emblem in the hero, the film and the final call to action; `hoodie` (sign-in / sign-up panel); `developer`, the "IQ" walrus (the AI pipeline section); `walrus` (Walrus Memory section and built-with); `tatum` (blockchain data, built-with); `business` (x402 settlement, built-with); `agent` (first investigations), `smart` (empty Memory Vault), `hackathon` (empty Learning Lab); `head`, the hoodie walrus's head in a circle (the back-to-top button on every long page).
 - On light pages the crops are framed tiles (their navy scene backgrounds read like the dark devices in the film) with a soft shadow and a hairline border.
 - Not used on payment confirmations, dense data tables or other high-focus screens.
 - The sheet's "Female mascot", "IQ Queen" and "Fit & Sexy" variants are not used: their styling does not fit a professional finance and blockchain product. Supply new artwork for athletic or fashion variants.

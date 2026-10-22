@@ -87,6 +87,7 @@ A six-chapter scroll film placed after "Why RecallIQ" (`#inside`, the target of 
 - `EmptyState mascot="…"` for first-run states; icon-only empty states elsewhere (and always on Payments).
 - Run view: `RunProgress` shows six phases derived from the real run status and recorded state steps; a failed or cancelled run shows the phase it stopped in.
 - `(dashboard)/loading.tsx` mirrors the page skeleton while data loads.
+- Back to top (`shared/back-to-top.tsx`, on the homepage and in the app shell): the walrus's head (`mascots/head.webp`) with a gradient arrow badge, in a round glass button whose gradient ring fills with reading progress. On hover the head peeks up and tilts. It appears after a screen and a half of scrolling, so short pages never show it. It steps aside while an element marked `data-hide-back-to-top` covers its corner (the film, whose controls live there), smooth-scrolls home (instantly with reduced motion), and moves focus to the page's `h1`. While hidden it is `inert`, so it cannot be tabbed to. The app's `main` keeps bottom padding so the last controls scroll clear of it.
 - Auth: split screen with a pastel brand panel (ice → lavender → aqua, the small hoodie mascot, the hero's headline) on large screens; same forms, labels and validation.
 - Payments stay restrained: plain tokens, no gloss shapes or mascots.
 
