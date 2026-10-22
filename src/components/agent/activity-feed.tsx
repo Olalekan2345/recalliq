@@ -37,14 +37,15 @@ const ICON: Record<string, typeof Search> = {
 };
 
 function toneFor(step: RunStep): string {
-  if (step.kind === "error") return "text-destructive";
+  if (step.kind === "error") return "border-transparent bg-danger-soft text-destructive";
   if (step.kind === "verification") {
-    if (step.title.includes("CONTRADICTED")) return "text-destructive";
-    if (step.title.includes("VERIFIED")) return "text-success";
+    if (step.title.includes("CONTRADICTED")) return "border-transparent bg-danger-soft text-destructive";
+    if (step.title.includes("VERIFIED")) return "border-transparent bg-success-soft text-success";
   }
-  if (step.kind === "payment") return "text-warning";
-  if (step.kind === "memory_recall" || step.kind === "memory_write") return "text-primary";
-  return "text-muted-foreground";
+  if (step.kind === "payment") return "border-transparent bg-warning-soft text-warning";
+  if (step.kind === "memory_recall" || step.kind === "memory_write") return "border-transparent bg-accent text-accent-foreground";
+  if (step.kind === "state") return "border-transparent bg-info-soft text-primary";
+  return "bg-card text-muted-foreground";
 }
 
 export function ActivityFeed({ steps, live }: { steps: RunStep[]; live: boolean }) {
@@ -58,13 +59,15 @@ export function ActivityFeed({ steps, live }: { steps: RunStep[]; live: boolean 
         const last = i === steps.length - 1;
         return (
           <li key={s.id} className="relative flex gap-3 pb-3 animate-in-fade">
-            {!last && <span className="absolute left-[13px] top-7 h-[calc(100%-1.25rem)] w-px bg-border" aria-hidden />}
-            <span className={cn("relative mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border bg-card", toneFor(s))}>
+            {!last && (
+              <span className="absolute left-[13px] top-7 h-[calc(100%-1.25rem)] w-px bg-gradient-to-b from-brand-cyan/40 via-border to-border" aria-hidden />
+            )}
+            <span className={cn("relative mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border", toneFor(s))}>
               <Icon className="size-3.5" aria-hidden />
               {last && live && <span className="pulse-dot absolute -right-0.5 -top-0.5 size-2 rounded-full bg-primary" aria-hidden />}
             </span>
             <div className="min-w-0 flex-1 pt-0.5">
-              <p className={cn("text-sm", s.kind === "state" ? "font-medium" : "")}>{s.title}</p>
+              <p className={cn("text-sm", s.kind === "state" ? "font-display font-semibold" : "")}>{s.title}</p>
               <p className="text-xs text-muted-foreground">
                 <time dateTime={s.createdAt}>{new Date(s.createdAt).toLocaleTimeString()}</time>
                 {s.kind !== "state" && <span> · {s.kind.replace(/_/g, " ")}</span>}

@@ -66,7 +66,10 @@ export function Composer({
   };
 
   return (
-    <form onSubmit={submit} className="rounded-xl border bg-card shadow-sm focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring/20">
+    <form
+      onSubmit={submit}
+      className="ring-brand shadow-elevated rounded-2xl bg-card transition-shadow duration-300 focus-within:shadow-[0_0_0_4px_var(--glow),0_24px_60px_-28px_rgb(50_84_228/0.55)]"
+    >
       <label htmlFor={`${id}-task`} className="sr-only">
         What should RecallIQ investigate?
       </label>
@@ -134,7 +137,7 @@ export function Composer({
           </Label>
         </div>
         <span className="ml-auto hidden text-xs text-muted-foreground sm:inline">Ctrl + Enter</span>
-        <Button type="submit" size="sm" loading={busy} disabled={disabled || task.trim().length < 3}>
+        <Button type="submit" variant="brand" size="sm" loading={busy} disabled={disabled || task.trim().length < 3}>
           {!busy && <ArrowUp aria-hidden />}
           {compact ? "Ask" : "Investigate"}
         </Button>
@@ -149,7 +152,7 @@ export function Composer({
               key={s.label}
               type="button"
               onClick={() => setTask(s.text)}
-              className="rounded-full border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-full border bg-muted/50 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {s.label}
             </button>

@@ -26,13 +26,14 @@ export type MascotVariant = keyof typeof MASCOTS;
 export function Mascot({
   variant,
   className,
-  priority,
+  eager,
   sizes,
   decorative = false,
 }: {
   variant: MascotVariant;
   className?: string;
-  priority?: boolean;
+  /** Above the fold: load immediately instead of lazily. */
+  eager?: boolean;
   sizes?: string;
   /** Purely ornamental next to text that already says the same thing. */
   decorative?: boolean;
@@ -44,7 +45,7 @@ export function Mascot({
       width={m.w}
       height={m.h}
       alt={decorative ? "" : m.alt}
-      priority={priority}
+      loading={eager ? "eager" : "lazy"}
       sizes={sizes ?? `${m.w}px`}
       className={cn("select-none", className)}
       draggable={false}

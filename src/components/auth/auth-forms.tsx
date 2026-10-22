@@ -64,7 +64,7 @@ export function SignInForm({ guestFirst = false }: { guestFirst?: boolean }) {
   };
 
   return (
-    <Card className="shadow-sm">
+    <Card className="glass">
       <CardHeader>
         <CardTitle className="text-xl">Sign in</CardTitle>
         <CardDescription>Continue your investigations and memory.</CardDescription>
@@ -94,7 +94,7 @@ export function SignInForm({ guestFirst = false }: { guestFirst?: boolean }) {
             />
           </div>
           {error && <FieldError>{error}</FieldError>}
-          <Button type="submit" className="w-full" loading={busy} disabled={!email || !password}>
+          <Button type="submit" variant="brand" className="w-full" loading={busy} disabled={!email || !password}>
             Sign in
           </Button>
         </form>
@@ -140,7 +140,7 @@ export function SignUpForm() {
   };
 
   return (
-    <Card className="shadow-sm">
+    <Card className="glass">
       <CardHeader>
         <CardTitle className="text-xl">Create your account</CardTitle>
         <CardDescription>Your lessons persist across sessions on Walrus Memory.</CardDescription>
@@ -171,7 +171,7 @@ export function SignUpForm() {
             {tooShort ? <FieldError id="pw-hint">Use at least 10 characters.</FieldError> : <FieldHint id="pw-hint">At least 10 characters.</FieldHint>}
           </div>
           {error && <FieldError>{error}</FieldError>}
-          <Button type="submit" className="w-full" loading={busy} disabled={!email || password.length < 10}>
+          <Button type="submit" variant="brand" className="w-full" loading={busy} disabled={!email || password.length < 10}>
             Create account
           </Button>
         </form>

@@ -6,7 +6,7 @@
  * and reduced-motion users get static layouts.
  */
 import { Fragment, useRef, useSyncExternalStore } from "react";
-import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
+import { m, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import { cn } from "@/lib/utils";
 import { DURATION, EASE_OUT, SPRING_SOFT, STAGGER } from "@/lib/motion";
 
@@ -115,7 +115,8 @@ export function MaskedHeading({
  * 1 when its bottom passes 35%). Frozen at 1 for reduced-motion users.
  */
 export function useSceneProgress(ref: React.RefObject<HTMLElement | null>, offset: [string, string] = ["start 0.85", "end 0.35"]): MotionValue<number> {
-  const reduced = useReducedMotion();
+  // Static until hydrated (matches the server HTML), then follows the user's motion preference.
+  const reduced = !useAmbientMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: offset as never });
   const done = useMotionValue(1);
   return reduced ? done : scrollYProgress;
@@ -176,7 +177,8 @@ function Word({
 
 /** Card that tilts toward the pointer (fine pointers only, never under reduced motion). */
 export function TiltCard({ children, className, max = 7 }: { children: React.ReactNode; className?: string; max?: number }) {
-  const reduced = useReducedMotion();
+  // Static until hydrated (matches the server HTML), then follows the user's motion preference.
+  const reduced = !useAmbientMotion();
   const rx = useSpring(0, SPRING_SOFT);
   const ry = useSpring(0, SPRING_SOFT);
   const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -202,7 +204,8 @@ export function TiltCard({ children, className, max = 7 }: { children: React.Rea
 export function Parallax({ children, className, distance = 60 }: { children: React.ReactNode; className?: string; distance?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const progress = useSceneProgress(ref, ["start end", "end start"]);
-  const reduced = useReducedMotion();
+  // Static until hydrated (matches the server HTML), then follows the user's motion preference.
+  const reduced = !useAmbientMotion();
   const y = useTransform(progress, [0, 1], reduced ? [0, 0] : [distance, -distance]);
   return (
     <m.div ref={ref} className={className} style={{ y }}>

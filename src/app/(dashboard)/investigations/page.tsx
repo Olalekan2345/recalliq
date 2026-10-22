@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { History } from "lucide-react";
 import { EmptyState, PageHeader } from "@/components/shared/layout-bits";
 import { RunStatusBadge } from "@/components/shared/status";
 import { Badge } from "@/components/ui/badge";
@@ -28,10 +27,10 @@ export default async function InvestigationsPage() {
       />
       {rows.length === 0 ? (
         <EmptyState
-          icon={History}
+          mascot="agent"
           title="No investigations yet"
           action={
-            <Button asChild>
+            <Button asChild variant="brand">
               <Link href="/workspace">Start one</Link>
             </Button>
           }

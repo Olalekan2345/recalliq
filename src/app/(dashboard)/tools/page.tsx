@@ -23,7 +23,7 @@ function Meter({ value, label }: { value: number; label: string }) {
       aria-valuenow={Math.round(value * 100)}
       aria-label={label}
     >
-      <div className="h-full rounded-full bg-primary" style={{ width: `${Math.round(value * 100)}%` }} />
+      <div className="bg-brand-gradient h-full rounded-full" style={{ width: `${Math.round(value * 100)}%` }} />
     </div>
   );
 }

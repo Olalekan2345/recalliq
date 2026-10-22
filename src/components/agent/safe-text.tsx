@@ -19,7 +19,7 @@ function Inline({ text, onEvidence }: Props) {
         if (p.startsWith("**") && p.endsWith("**")) return <strong key={i}>{p.slice(2, -2)}</strong>;
         if (p.startsWith("`") && p.endsWith("`"))
           return (
-            <code key={i} className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em]">
+            <code key={i} className="rounded bg-muted px-1 py-0.5 font-mono text-[0.85em] wrap-anywhere">
               {p.slice(1, -1)}
             </code>
           );

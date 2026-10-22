@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { m, useReducedMotion, useTransform, type MotionValue } from "motion/react";
+import { m, useTransform, type MotionValue } from "motion/react";
 import { ArrowRight, DatabaseZap, Microscope, ShieldCheck, ShieldX, Workflow } from "lucide-react";
-import { MaskedHeading, Reveal, useSceneProgress } from "@/components/motion/primitives";
+import { MaskedHeading, Reveal, useSceneProgress, useAmbientMotion } from "@/components/motion/primitives";
 import { Eyebrow, Scene } from "./scene";
 
 /**
@@ -14,7 +14,8 @@ import { Eyebrow, Scene } from "./scene";
 export function Autopsy() {
   const ref = useRef<HTMLDivElement>(null);
   const progress = useSceneProgress(ref, ["start 0.9", "center 0.55"]);
-  const reduced = useReducedMotion();
+  // Static until hydrated (matches the server HTML), then follows the user's motion preference.
+  const reduced = !useAmbientMotion();
   const leftRotate = useTransform(progress, [0, 1], reduced ? [0, 0] : [22, 0]);
   const rightRotate = useTransform(progress, [0, 1], reduced ? [0, 0] : [-22, 0]);
   const leftX = useTransform(progress, [0, 1], reduced ? [0, 0] : [-60, 0]);

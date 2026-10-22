@@ -19,6 +19,7 @@ import { ActivityFeed } from "./activity-feed";
 import { Composer } from "./composer";
 import { EvidenceDialog, EvidenceList } from "./evidence";
 import { ResultPanel } from "./result-panel";
+import { RunProgress } from "./run-progress";
 import { TERMINAL, type RunDetail, type RunStep } from "./types";
 
 export function RunView({ initial }: { initial: RunDetail }) {
@@ -111,7 +112,7 @@ export function RunView({ initial }: { initial: RunDetail }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 border-b pb-6">
+      <div className="flex flex-col gap-5 border-b pb-6">
         <Link
           href="/workspace"
           className="inline-flex w-fit items-center gap-1 rounded-md text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -143,6 +144,7 @@ export function RunView({ initial }: { initial: RunDetail }) {
             )}
           </div>
         </div>
+        <RunProgress status={status} steps={steps} />
         {actionError && <Alert tone="danger" title={actionError} />}
         {status === "FAILED" && run.error && (
           <Alert tone="danger" title="This investigation failed">

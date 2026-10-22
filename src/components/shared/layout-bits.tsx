@@ -1,6 +1,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Mascot, type MascotVariant } from "@/components/brand/mascot";
 
 export function PageHeader({
   title,
@@ -14,49 +15,73 @@ export function PageHeader({
   eyebrow?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0 space-y-1.5">
-        {eyebrow && <div className="text-xs font-medium uppercase tracking-wider text-primary">{eyebrow}</div>}
-        <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
-        {description && <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>}
+    <div className="relative flex flex-col gap-4 pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0 space-y-2">
+        {eyebrow && (
+          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+            <span className="bg-brand-gradient size-1.5 rounded-full" aria-hidden />
+            {eyebrow}
+          </div>
+        )}
+        <h1 className="text-2xl font-semibold tracking-tight md:text-[2rem] md:leading-tight">{title}</h1>
+        {description && <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-brand-cyan/60 via-border to-transparent" aria-hidden />
     </div>
   );
 }
 
 export function EmptyState({
   icon: Icon,
+  mascot,
   title,
   children,
   action,
   className,
 }: {
   icon?: React.ComponentType<{ className?: string }>;
+  /** Brand artwork instead of an icon, for first-run and onboarding states. */
+  mascot?: MascotVariant;
   title: string;
   children?: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center justify-center rounded-lg border border-dashed px-6 py-12 text-center", className)}>
-      {Icon && (
-        <div className="mb-3 flex size-10 items-center justify-center rounded-full bg-muted">
-          <Icon className="size-5 text-muted-foreground" aria-hidden />
-        </div>
+    <div
+      className={cn(
+        "relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-card/40 px-6 py-12 text-center",
+        className,
       )}
-      <p className="font-medium">{title}</p>
-      {children && <div className="mt-1 max-w-md text-sm text-muted-foreground">{children}</div>}
-      {action && <div className="mt-4">{action}</div>}
+    >
+      {mascot ? (
+        <div className="relative mb-5">
+          <div className="bg-brand-glow absolute -inset-6 rounded-full blur-xl" aria-hidden />
+          <div className="shadow-elevated relative w-24 overflow-hidden rounded-2xl border">
+            <Mascot variant={mascot} decorative sizes="96px" className="h-auto w-full" />
+          </div>
+        </div>
+      ) : (
+        Icon && (
+          <div className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-accent">
+            <Icon className="size-5 text-accent-foreground" aria-hidden />
+          </div>
+        )
+      )}
+      <p className="font-display font-semibold">{title}</p>
+      {children && <div className="mt-1.5 max-w-md text-sm leading-6 text-muted-foreground">{children}</div>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }
 
 export function Stat({ label, value, hint, className }: { label: string; value: React.ReactNode; hint?: React.ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-lg border bg-card p-4", className)}>
+    <div className={cn("shadow-elevated relative overflow-hidden rounded-xl border bg-card p-4", className)}>
+      <div className="bg-brand-gradient absolute inset-x-0 top-0 h-0.5 opacity-70" aria-hidden />
       <div className="text-xs font-medium text-muted-foreground">{label}</div>
-      <div className="mt-1 font-mono text-xl font-semibold tabular-nums">{value}</div>
+      <div className="mt-1.5 font-mono text-xl font-semibold tabular-nums">{value}</div>
       {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
     </div>
   );
@@ -79,7 +104,7 @@ export function Section({
     <section className={cn("space-y-3", className)}>
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+          <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
         {actions}
@@ -96,7 +121,7 @@ export function Section({
 export function Logo({ className, size = 28, tone = "auto" }: { className?: string; size?: number; tone?: "auto" | "light" }) {
   return (
     <span className={cn("inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight", className)}>
-      <Image src="/brand/recalliq-mark.png" alt="" width={size} height={size} priority className="shrink-0" />
+      <Image src="/brand/recalliq-mark.png" alt="" width={size} height={size} loading="eager" className="shrink-0" />
       <span>
         Recall<span className={tone === "light" ? "brand-gradient-text-light" : "brand-gradient-text"}>IQ</span>
       </span>
@@ -107,6 +132,13 @@ export function Logo({ className, size = 28, tone = "auto" }: { className?: stri
 /** Large mark for hero areas. */
 export function BrandMark({ size = 280, className }: { size?: number; className?: string }) {
   return (
-    <Image src="/brand/recalliq-mark.png" alt="RecallIQ logo: a walrus inside a magnifying-glass Q" width={size} height={size} priority className={className} />
+    <Image
+      src="/brand/recalliq-mark.png"
+      alt="RecallIQ logo: a walrus inside a magnifying-glass Q"
+      width={size}
+      height={size}
+      loading="eager"
+      className={className}
+    />
   );
 }

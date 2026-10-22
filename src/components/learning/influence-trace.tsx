@@ -149,7 +149,12 @@ export function InfluenceTrace({ trace }: { trace: TraceInput }) {
     <ol className="space-y-0">
       {stages.map((s, i) => (
         <li key={s.title} className="relative flex gap-3 pb-5">
-          {i < stages.length - 1 && <span className={cn("absolute left-[11px] top-6 h-full w-px", s.done ? "bg-primary/50" : "bg-border")} aria-hidden />}
+          {i < stages.length - 1 && (
+            <span
+              className={cn("absolute left-[11px] top-6 h-full w-px", s.done ? "bg-gradient-to-b from-brand-cyan/70 to-brand-violet/60" : "bg-border")}
+              aria-hidden
+            />
+          )}
           {s.done ? (
             <CheckCircle2 className="relative size-6 shrink-0 text-primary" aria-label="Recorded" />
           ) : (

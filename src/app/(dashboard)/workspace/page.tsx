@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { History } from "lucide-react";
 import { Composer } from "@/components/agent/composer";
 import { EmptyState, PageHeader, Section } from "@/components/shared/layout-bits";
 import { RunStatusBadge } from "@/components/shared/status";
@@ -68,16 +67,16 @@ export default async function WorkspacePage() {
         }
       >
         {investigations.length === 0 ? (
-          <EmptyState icon={History} title="No investigations yet">
-            Your investigations, their evidence and any lessons learned will appear here.
+          <EmptyState mascot="agent" title="No investigations yet">
+            Ask your first question above. Your investigations, their evidence and any lessons learned will appear here.
           </EmptyState>
         ) : (
-          <ul className="divide-y rounded-lg border bg-card">
+          <ul className="shadow-elevated divide-y overflow-hidden rounded-xl border bg-card">
             {investigations.map((inv) => (
               <li key={inv.id}>
                 <Link
                   href={inv.lastRunId ? `/workspace/run/${inv.lastRunId}` : `/investigations/${inv.id}`}
-                  className="flex flex-col gap-2 p-4 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:flex-row sm:items-center"
+                  className="group flex flex-col gap-2 p-4 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:flex-row sm:items-center"
                 >
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">{inv.title}</span>
                   <span className="flex shrink-0 items-center gap-2">

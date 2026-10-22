@@ -59,7 +59,11 @@ export default async function MemoryVaultPage({ searchParams }: { searchParams: 
       </Suspense>
 
       {memories.length === 0 ? (
-        <EmptyState icon={BrainCircuit} title={Object.values(sp).some(Boolean) ? "No memories match these filters" : "No memories yet"}>
+        <EmptyState
+          icon={BrainCircuit}
+          mascot={Object.values(sp).some(Boolean) ? undefined : "smart"}
+          title={Object.values(sp).some(Boolean) ? "No memories match these filters" : "No memories yet"}
+        >
           {Object.values(sp).some(Boolean)
             ? "Try a different filter."
             : "RecallIQ only stores a lesson when an investigation produces a verified mistake or a verified success worth remembering."}

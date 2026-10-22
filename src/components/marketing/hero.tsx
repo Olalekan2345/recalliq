@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useRef } from "react";
-import { m, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
+import { m, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import { ArrowDown, ArrowRight, BrainCircuit, History, ShieldCheck, Wallet, Workflow } from "lucide-react";
 import { SPRING_SOFT } from "@/lib/motion";
+import { useAmbientMotion } from "@/components/motion/primitives";
 import { cn } from "@/lib/utils";
 import { Aurora, Scene, ScrollLink } from "./scene";
 
@@ -29,7 +30,8 @@ const delay = (ms: number) => ({ "--d": `${ms}ms` }) as React.CSSProperties;
 
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  // Static until hydrated (matches the server HTML), then follows the user's motion preference.
+  const reduced = !useAmbientMotion();
 
   // Pointer parallax (mouse only): springs keep it soft.
   const px = useSpring(0, SPRING_SOFT);
@@ -66,7 +68,8 @@ export function Hero() {
                     alt="RecallIQ emblem: the walrus inside a magnifying-glass Q"
                     width={512}
                     height={512}
-                    priority
+                    preload
+                    fetchPriority="high"
                     sizes="(min-width: 768px) 240px, 180px"
                     className="relative h-auto w-[180px] drop-shadow-[0_30px_60px_rgb(24_204_249/0.35)] md:w-[240px]"
                   />

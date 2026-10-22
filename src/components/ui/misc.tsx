@@ -3,7 +3,7 @@ import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("rounded-md bg-muted motion-safe:animate-pulse", className)} aria-hidden {...props} />;
+  return <div className={cn("skeleton-shimmer rounded-md bg-muted", className)} aria-hidden {...props} />;
 }
 
 export function Separator({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -33,7 +33,7 @@ export function Alert({
   const { icon: Icon, cls } = ALERT[tone];
   const iconColor = tone === "success" ? "text-success" : tone === "warning" ? "text-warning" : tone === "danger" ? "text-destructive" : "text-primary";
   return (
-    <div role={tone === "danger" ? "alert" : "status"} className={cn("flex gap-3 rounded-lg border p-4 text-sm", cls, className)}>
+    <div role={tone === "danger" ? "alert" : "status"} className={cn("flex gap-3 rounded-xl border p-4 text-sm", cls, className)}>
       <Icon className={cn("mt-0.5 size-4 shrink-0", iconColor)} aria-hidden />
       <div className="min-w-0 flex-1 space-y-1">
         {title && <p className="font-medium">{title}</p>}

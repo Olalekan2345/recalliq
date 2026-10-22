@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { m, useReducedMotion, useTransform, type MotionValue } from "motion/react";
+import { m, useTransform, type MotionValue } from "motion/react";
 import { Check, DatabaseZap, History, Inbox, MessageSquareText, Microscope, Search, ShieldCheck, Workflow } from "lucide-react";
-import { MaskedHeading, Reveal, useSceneProgress } from "@/components/motion/primitives";
+import { MaskedHeading, Reveal, useSceneProgress, useAmbientMotion } from "@/components/motion/primitives";
 import { Aurora, Eyebrow, Scene } from "./scene";
 
 /** The exact step titles recorded for every run (see lib/ai/orchestrator/run-agent.ts). */
@@ -31,7 +31,8 @@ const STAGES = [
 export function InsideAgent() {
   const ref = useRef<HTMLDivElement>(null);
   const progress = useSceneProgress(ref, ["start 0.95", "end 0.6"]);
-  const reduced = useReducedMotion();
+  // Static until hydrated (matches the server HTML), then follows the user's motion preference.
+  const reduced = !useAmbientMotion();
   const rotateX = useTransform(progress, [0, 0.45], reduced ? [0, 0] : [26, 0]);
   const rotateZ = useTransform(progress, [0, 0.45], reduced ? [0, 0] : [-5, 0]);
   const scale = useTransform(progress, [0, 0.45], reduced ? [1, 1] : [0.88, 1]);

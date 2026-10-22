@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FlaskConical, GitBranch, Repeat2 } from "lucide-react";
+import { GitBranch, Repeat2 } from "lucide-react";
 import { EmptyState, PageHeader, Section } from "@/components/shared/layout-bits";
 import { InfluenceTrace } from "@/components/learning/influence-trace";
 import { NewEvaluation } from "@/components/learning/new-evaluation";
@@ -35,7 +35,7 @@ export default async function LearningLabPage() {
 
       <Section title="Paired evaluations" description="Baseline (memory off) vs Walrus memory recall on the same tasks, model and limits.">
         {evaluations.length === 0 ? (
-          <EmptyState icon={FlaskConical} title="No evaluations yet">
+          <EmptyState mascot="hackathon" title="No evaluations yet">
             Create one with tasks that resemble mistakes the agent has made before — that is where stored lessons should make a difference.
           </EmptyState>
         ) : (

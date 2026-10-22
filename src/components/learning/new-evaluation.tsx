@@ -45,7 +45,7 @@ export function NewEvaluation({ freeTools, disabled }: { freeTools: Array<{ id: 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button disabled={disabled}>
+        <Button variant="brand" disabled={disabled}>
           <FlaskConical aria-hidden /> New evaluation
         </Button>
       </DialogTrigger>

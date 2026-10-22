@@ -95,6 +95,29 @@
   --scene-light-muted: #a9b3dc;
 }
 
+/* dApp Kit wallet button and modal (web components): themed through their CSS variables. */
+:root {
+  --dapp-kit-primary: var(--primary);
+  --dapp-kit-primary-foreground: var(--primary-foreground);
+  --dapp-kit-background: var(--popover);
+  --dapp-kit-foreground: var(--popover-foreground);
+  --dapp-kit-popover: var(--popover);
+  --dapp-kit-popover-foreground: var(--popover-foreground);
+  --dapp-kit-secondary: var(--secondary);
+  --dapp-kit-secondary-foreground: var(--secondary-foreground);
+  --dapp-kit-muted: var(--muted);
+  --dapp-kit-muted-foreground: var(--muted-foreground);
+  --dapp-kit-accent: var(--accent);
+  --dapp-kit-accent-foreground: var(--accent-foreground);
+  --dapp-kit-border: var(--border);
+  --dapp-kit-input: var(--input);
+  --dapp-kit-ring: var(--ring);
+  --dapp-kit-destructive: var(--destructive);
+  --dapp-kit-positive: var(--success);
+  --dapp-kit-radius: 0.625rem;
+  --dapp-kit-font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
