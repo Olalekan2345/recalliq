@@ -9,7 +9,8 @@
  *     public/brand/recalliq-mark.png   512×512 transparent (UI)
  *     src/app/icon.png                 512×512 transparent (favicon)
  *     src/app/apple-icon.png           180×180 on white (iOS home screen)
- *     src/app/opengraph-image.png      1200×630 full logo on white (link previews)
+ *     src/app/opengraph-image.png      1200×630 full logo on the frosted brand surface (link previews)
+ *     public/brand/mascots/*.webp      mascot artwork cropped from assets/brand/mascot-sheet.png
  * - Prints sampled brand colours.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -100,14 +101,54 @@ writeFileSync(path.join(root, "public", "brand", "recalliq-mark.png"), await squ
 writeFileSync(path.join(root, "src", "app", "icon.png"), await square(192, 0.02, transparent));
 writeFileSync(path.join(root, "src", "app", "apple-icon.png"), await square(180, 0.1, white));
 
-const og = await sharp(SRC).resize({ height: 560, fit: "inside" }).toBuffer();
+// Link preview: the full transparent logo on the brand's frosted ice → lavender light surface.
+const ogBackground = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f9ff"/><stop offset="0.55" stop-color="#eef0ff"/><stop offset="1" stop-color="#f1ecff"/></linearGradient>
+    <radialGradient id="c" cx="0.22" cy="0.2" r="0.6"><stop offset="0" stop-color="#18ccf9" stop-opacity="0.22"/><stop offset="1" stop-color="#18ccf9" stop-opacity="0"/></radialGradient>
+    <radialGradient id="v" cx="0.82" cy="0.85" r="0.6"><stop offset="0" stop-color="#9976f9" stop-opacity="0.22"/><stop offset="1" stop-color="#9976f9" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/><rect width="1200" height="630" fill="url(#c)"/><rect width="1200" height="630" fill="url(#v)"/>
+</svg>`);
+const og = await full
+  .clone()
+  .png()
+  .toBuffer()
+  .then((b) => sharp(b).resize({ height: 540, fit: "inside" }).toBuffer());
 writeFileSync(
   path.join(root, "src", "app", "opengraph-image.png"),
-  await sharp({ create: { width: 1200, height: 630, channels: 3, background: { r: 255, g: 255, b: 255 } } })
+  await sharp(ogBackground)
     .composite([{ input: og, gravity: "center" }])
     .png({ compressionLevel: 9 })
     .toBuffer(),
 );
+
+// Mascot artwork, cropped from the approved sheet (assets/brand/mascot-sheet.png, 1536×1024).
+// Cards keep their own scene backgrounds: they are framed artwork, never cut out.
+// Crops are inset a few pixels inside each card's border and never upscaled.
+const MASCOTS: Record<string, [number, number, number, number]> = {
+  hoodie: [492, 4, 972, 410],
+  smart: [997, 162, 1148, 303],
+  "recalliq-white": [16, 418, 222, 654],
+  tatum: [238, 418, 440, 654],
+  walrus: [456, 418, 657, 654],
+  "tatum-walrus": [673, 418, 875, 654],
+  agent: [891, 418, 1092, 654],
+  developer: [1108, 418, 1310, 654],
+  premium: [1326, 418, 1528, 654],
+  business: [679, 718, 892, 969],
+  hackathon: [909, 718, 1117, 969],
+  cyber: [1133, 718, 1331, 969],
+};
+const SHEET = path.join(root, "assets", "brand", "mascot-sheet.png");
+mkdirSync(path.join(root, "public", "brand", "mascots"), { recursive: true });
+for (const [name, [x0, y0, x1, y1]] of Object.entries(MASCOTS)) {
+  await sharp(SHEET)
+    .extract({ left: x0, top: y0, width: x1 - x0, height: y1 - y0 })
+    .webp({ quality: 90 })
+    .toFile(path.join(root, "public", "brand", "mascots", `${name}.webp`));
+}
+console.log(`Wrote ${Object.keys(MASCOTS).length} mascot crops to public/brand/mascots/`);
 writeFileSync(path.join(root, "src", "app", "opengraph-image.alt.txt"), "RecallIQ logo — a walrus inside a magnifying-glass Q");
 
 // Sample brand colours (average of a small patch) from the opaque mark.

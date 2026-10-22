@@ -35,7 +35,8 @@ async function signUp(page: Page) {
 
 test("landing page explains the product without fabricated stats", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("AI that remembers its mistakes");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("AI that remembers. Intelligence that evolves.");
+  await expect(page.getByRole("link", { name: "Launch RecallIQ" }).first()).toHaveAttribute("href", "/sign-up");
   await expect(page.getByRole("heading", { name: "Live integration status" })).toBeVisible();
   const body = await page.locator("body").innerText();
   expect(body).not.toMatch(/\b\d{1,3}(,\d{3})+\s+(users|investigations|developers)\b/i);

@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
+// Display face for headings: rounded geometric forms that echo the logo's wordmark.
+const display = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap", weight: ["500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: { default: "RecallIQ — AI that remembers its mistakes", template: "%s · RecallIQ" },
+  title: { default: "RecallIQ — AI that remembers. Intelligence that evolves.", template: "%s · RecallIQ" },
   description:
     "An evidence-driven Sui investigation agent that learns from verified mistakes on Walrus Memory and pays for specialist analysis only when it is worth it.",
   applicationName: "RecallIQ",
@@ -15,14 +17,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfcfd" },
-    { media: "(prefers-color-scheme: dark)", color: "#10131a" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f8ff" },
+    { media: "(prefers-color-scheme: dark)", color: "#070b1f" },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${sans.variable} ${mono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${sans.variable} ${mono.variable} ${display.variable}`}>
       <body className="min-h-dvh font-sans">
         <Providers>{children}</Providers>
       </body>
