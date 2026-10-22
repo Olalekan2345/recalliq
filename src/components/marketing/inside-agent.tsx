@@ -43,7 +43,7 @@ export function InsideAgent() {
       <Aurora variant="cyan" />
       <div className="mx-auto max-w-6xl px-4 py-28 md:px-6 md:py-36">
         <div className="max-w-3xl">
-          <Eyebrow>Inside the agent</Eyebrow>
+          <Eyebrow>The pipeline</Eyebrow>
           <MaskedHeading
             id="how-title"
             lines={["Every run follows the", "same honest path."]}

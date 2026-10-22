@@ -316,6 +316,75 @@
   }
 }
 
+/*
+ * "Inside RecallIQ" film (components/marketing/cinematic). Every class is
+ * prefixed cine- and only used there; nothing here styles other pages.
+ */
+.cine-desk {
+  background:
+    radial-gradient(ellipse 30% 22% at 50% 30%, rgb(24 204 249 / 0.16), transparent 70%),
+    radial-gradient(ellipse 22% 16% at 30% 34%, rgb(214 92 255 / 0.1), transparent 70%),
+    linear-gradient(180deg, rgb(10 14 44 / 0.55) 0%, rgb(9 13 40 / 0.86) 30%, rgb(5 8 26 / 0.94) 100%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.03);
+}
+.cine-keys {
+  background-image: repeating-linear-gradient(0deg, transparent 0 34px, #050818 34px 40px), repeating-linear-gradient(90deg, #161d4d 0 40px, #050818 40px 46px);
+  box-shadow:
+    0 0 60px -10px rgb(24 204 249 / 0.45),
+    inset 0 0 40px rgb(24 204 249 / 0.18);
+}
+.cine-screen {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 0 90px -12px rgb(24 204 249 / 0.5),
+    0 0 160px -40px rgb(153 118 249 / 0.55);
+}
+.cine-holo {
+  mask-image: url("/brand/recalliq-mark.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background: repeating-linear-gradient(0deg, rgb(127 227 255 / 0.55) 0 1px, transparent 1px 4px);
+}
+.cine-beam {
+  background: linear-gradient(0deg, rgb(24 204 249 / 0.55), rgb(24 204 249 / 0.08) 70%, transparent);
+  clip-path: polygon(42% 100%, 58% 100%, 100% 0, 0 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cine-flicker {
+    animation: cine-flicker 3.4s steps(1) infinite;
+  }
+  .cine-orbit {
+    animation: spin 30s linear infinite;
+  }
+  .cine-orbit-reverse {
+    animation: spin 46s linear infinite reverse;
+  }
+}
+
+@keyframes cine-flicker {
+  0%,
+  100% {
+    opacity: 0.95;
+  }
+  47% {
+    opacity: 0.95;
+  }
+  48% {
+    opacity: 0.72;
+  }
+  49% {
+    opacity: 0.95;
+  }
+  83% {
+    opacity: 0.8;
+  }
+  84% {
+    opacity: 0.95;
+  }
+}
+
 /* Scenes far off-screen pause their decorative animations (see marketing/scene.tsx). */
 [data-paused],
 [data-paused] * {

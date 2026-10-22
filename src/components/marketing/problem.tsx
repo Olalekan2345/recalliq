@@ -35,7 +35,7 @@ export function Problem() {
           <ScrollWords
             as="h2"
             id="problem-title"
-            text="Most AI forgets what went wrong."
+            text="Forgetful AI repeats what went wrong."
             className="mt-6 max-w-4xl font-display text-[2.6rem] font-semibold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl"
           />
           <MaskedHeading

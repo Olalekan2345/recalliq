@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { HealthBadge } from "@/components/shared/status";
 import { Logo } from "@/components/shared/layout-bits";
 import { MotionProvider } from "@/components/motion/motion-provider";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { Hero } from "@/components/marketing/hero";
+import { CinematicSection } from "@/components/marketing/cinematic/cinematic-section";
 import { Problem } from "@/components/marketing/problem";
 import { InsideAgent } from "@/components/marketing/inside-agent";
 import { MemoryUniverse } from "@/components/marketing/memory-universe";
@@ -66,13 +68,35 @@ export default async function LandingPage() {
         <SiteHeader />
         <main>
           <Hero />
-          <Problem />
-          <InsideAgent />
-          <MemoryUniverse />
-          <Autopsy />
-          <WorthIt tools={tools} />
-          <PoweredBy />
-          <LearningScene stats={stats} />
+          {/*
+            Each below-the-fold scene is its own Suspense boundary: React hydrates the
+            header and hero first and the rest in later tasks (clicks on a part not yet
+            hydrated are replayed), so the page answers input sooner.
+          */}
+          <Suspense>
+            <CinematicSection />
+          </Suspense>
+          <Suspense>
+            <Problem />
+          </Suspense>
+          <Suspense>
+            <InsideAgent />
+          </Suspense>
+          <Suspense>
+            <MemoryUniverse />
+          </Suspense>
+          <Suspense>
+            <Autopsy />
+          </Suspense>
+          <Suspense>
+            <WorthIt tools={tools} />
+          </Suspense>
+          <Suspense>
+            <PoweredBy />
+          </Suspense>
+          <Suspense>
+            <LearningScene stats={stats} />
+          </Suspense>
 
           <section id="faq" tabIndex={-1} className="scene-midnight scroll-mt-20 outline-none" aria-labelledby="faq-title">
             <div className="mx-auto grid max-w-6xl gap-14 px-4 py-28 md:px-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">

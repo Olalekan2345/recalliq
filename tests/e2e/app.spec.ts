@@ -7,6 +7,12 @@ import { expect, test, type Page } from "@playwright/test";
 
 const password = "correct-horse-battery-staple";
 
+/** Navigate and wait until the page has loaded its JavaScript (hydrated) before interacting. */
+async function gotoReady(page: Page, path: string) {
+  await page.goto(path);
+  await page.waitForLoadState("networkidle");
+}
+
 /**
  * Better Auth limits sign-up/sign-in per IP (3 per 10 s) and the suite signs up
  * often from one machine: on a 429, wait out X-Retry-After and submit again.
@@ -25,7 +31,7 @@ async function submitAuth(page: Page, button: string, endpoint: string) {
 
 async function signUp(page: Page) {
   const email = `e2e-${Date.now()}-${Math.floor(Math.random() * 1e6)}@example.test`;
-  await page.goto("/sign-up");
+  await gotoReady(page, "/sign-up");
   await page.getByLabel("Name").fill("E2E User");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
@@ -34,7 +40,7 @@ async function signUp(page: Page) {
 }
 
 test("landing page explains the product without fabricated stats", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("AI that remembers. Intelligence that evolves.");
   await expect(page.getByRole("link", { name: "Launch RecallIQ" }).first()).toHaveAttribute("href", "/sign-up");
   await expect(page.getByRole("heading", { name: "Live integration status" })).toBeVisible();
@@ -44,10 +50,42 @@ test("landing page explains the product without fabricated stats", async ({ page
 });
 
 test("“See How It Learns” takes you to the agent pipeline", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await page.getByRole("link", { name: "See How It Learns" }).click();
   await expect(page).toHaveURL(/#how$/);
   await expect(page.getByRole("heading", { name: /Every run follows the same honest path/ })).toBeInViewport();
+});
+
+test("Inside RecallIQ film: chapters, guided play, skip and CTA (desktop)", async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 0) < 1024, "The scroll film runs on large screens only");
+  await gotoReady(page, "/");
+  // The film is lazy-loaded once the page is idle; wait for it rather than assuming it is there.
+  await expect(page.locator("[data-film]")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("heading", { name: "Intelligence That Learns." })).toBeVisible();
+
+  const rail = page.getByRole("navigation", { name: "Film chapters" });
+  await rail.getByRole("button", { name: "Remember" }).click();
+  await expect(rail.getByRole("button", { name: "Remember" })).toHaveAttribute("aria-current", "step", { timeout: 10_000 });
+
+  // Guided play advances the page and stops on any key press.
+  const before = await page.evaluate(() => window.scrollY);
+  await page.getByRole("button", { name: "Play film" }).click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 50);
+  await page.keyboard.press("Shift");
+  await expect(page.getByRole("button", { name: /Play film|Replay film/ })).toBeVisible();
+
+  await expect(page.getByRole("link", { name: "Explore RecallIQ" })).toHaveAttribute("href", "/workspace");
+  await page.getByRole("link", { name: "Skip film" }).click();
+  await expect(page).toHaveURL(/#after-film$/);
+});
+
+test("Inside RecallIQ reads as plain chapters with reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await gotoReady(page, "/");
+  await expect(page.locator("[data-film]")).toBeHidden();
+  await expect(page.getByRole("heading", { name: "Every question starts an investigation. Every experience can become a lesson." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Most AI forgets. RecallIQ remembers. Powered by Walrus Memory." })).toBeAttached();
+  await expect(page.getByRole("link", { name: "Explore RecallIQ" })).toHaveAttribute("href", "/workspace");
 });
 
 test("mobile navigation drawer opens and closes with Escape", async ({ page }) => {
@@ -73,14 +111,14 @@ test("sign up, sign out and sign back in", async ({ page }) => {
   await page.getByRole("button", { name: "Account menu" }).click();
   await page.getByRole("menuitem", { name: "Sign out" }).click();
   await page.waitForURL((u) => u.pathname === "/");
-  await page.goto("/sign-in");
+  await gotoReady(page, "/sign-in");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await submitAuth(page, "Sign in", "/api/auth/sign-in");
 });
 
 test("wrong password shows an inline error", async ({ page }) => {
-  await page.goto("/sign-in");
+  await gotoReady(page, "/sign-in");
   await page.getByLabel("Email").fill("nobody@example.test");
   await page.getByLabel("Password").fill("wrong-password-123");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
@@ -145,7 +183,7 @@ test("guest access is limited and labelled", async ({ page }) => {
 });
 
 test("dark mode toggles", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   await page.getByRole("button", { name: "Change theme" }).click();
   await page.getByRole("menuitemradio", { name: "dark" }).click();
   await expect(page.locator("html")).toHaveClass(/dark/);
