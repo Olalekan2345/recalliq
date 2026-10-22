@@ -3,14 +3,18 @@ import { db } from "@/lib/db/client";
 import { agentRun } from "@/lib/db/schema";
 import { handle, json, readJson, requireApiUser } from "@/server/http";
 import { createRun, createRunSchema } from "@/server/services/runs";
+import { scheduleDrain } from "@/server/jobs/drain";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Serverless hosting runs the queued work after the response (server/jobs/drain.ts).
+export const maxDuration = 300;
 
 export const POST = handle(async (req) => {
   const user = await requireApiUser(req);
   const input = await readJson(req, createRunSchema, 16 * 1024);
   const created = await createRun(user.id, input);
+  scheduleDrain();
   return json(created, 201);
 });
 

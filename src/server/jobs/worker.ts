@@ -22,7 +22,7 @@ import { runHealthChecks } from "@/server/services/health";
 import { claim, complete, enqueue, extendLease, fail, reschedule, type JobRow, type JobType } from "./queue";
 
 const log = logger("worker");
-const LEASE_MS = 5 * 60_000;
+export const LEASE_MS = 5 * 60_000;
 
 type HandlerResult = { reschedule?: number } | void;
 type Handler = (job: JobRow, heartbeat: () => Promise<void>) => Promise<HandlerResult>;
@@ -52,7 +52,15 @@ export const HANDLERS: Record<JobType, Handler> = {
     const outcome = await reconcilePayment(str(job, "intentId"));
     if (outcome === "pending") return { reschedule: 15_000 };
   },
-  "evaluation.run": async (job, heartbeat) => runEvaluation(str(job, "evaluationRunId"), heartbeat),
+  "evaluation.run": async (job, heartbeat) => {
+    // Serverless: one task×mode per execution, then requeue (rescheduling does not use up an attempt).
+    if (env().WORKER_MODE === "serverless") {
+      const progress = await runEvaluation(str(job, "evaluationRunId"), heartbeat, { maxUnits: 1 });
+      if (progress === "more") return { reschedule: 0 };
+      return;
+    }
+    await runEvaluation(str(job, "evaluationRunId"), heartbeat);
+  },
 };
 
 export interface WorkerHandle {
@@ -87,31 +95,39 @@ async function recoverInterruptedRuns(): Promise<void> {
   }
 }
 
+export const newWorkerId = () => `${hostname()}:${process.pid}:${randomToken(4)}`;
+
+/** Run one claimed job to completion: complete, reschedule, or record the failure. */
+export async function runJob(job: JobRow, workerId: string): Promise<void> {
+  const heartbeat = () => extendLease(job.id, workerId, LEASE_MS);
+  const t = Date.now();
+  try {
+    const res = await HANDLERS[job.type as JobType](job, heartbeat);
+    if (res && typeof res.reschedule === "number") await reschedule(job.id, res.reschedule);
+    else await complete(job.id);
+    log.info("job done", { type: job.type, id: job.id, ms: Date.now() - t });
+  } catch (err) {
+    const outcome = await fail(job, err);
+    log.error("job failed", { type: job.type, id: job.id, attempt: job.attempts, outcome, err: safeErrorMessage(err) });
+  }
+}
+
+/** Once per process: register tools, recover interrupted runs, resume the Walrus memory outbox. */
+export async function startupTasks(): Promise<void> {
+  await syncToolDefinitions().catch((err) => log.error("tool sync failed", { err: safeErrorMessage(err) }));
+  await recoverInterruptedRuns().catch((err) => log.error("run recovery failed", { err: safeErrorMessage(err) }));
+  await resumeMemoryOutbox().catch((err) => log.error("memory outbox resume failed", { err: safeErrorMessage(err) }));
+}
+
 export function startWorker(opts: { concurrency?: number; pollMs?: number } = {}): WorkerHandle {
-  const workerId = `${hostname()}:${process.pid}:${randomToken(4)}`;
+  const workerId = newWorkerId();
   const concurrency = opts.concurrency ?? env().WORKER_CONCURRENCY;
   const pollMs = opts.pollMs ?? 1_000;
   let stopping = false;
   const running = new Set<Promise<void>>();
 
-  const runJob = async (job: JobRow) => {
-    const heartbeat = () => extendLease(job.id, workerId, LEASE_MS);
-    const t = Date.now();
-    try {
-      const res = await HANDLERS[job.type as JobType](job, heartbeat);
-      if (res && typeof res.reschedule === "number") await reschedule(job.id, res.reschedule);
-      else await complete(job.id);
-      log.info("job done", { type: job.type, id: job.id, ms: Date.now() - t });
-    } catch (err) {
-      const outcome = await fail(job, err);
-      log.error("job failed", { type: job.type, id: job.id, attempt: job.attempts, outcome, err: safeErrorMessage(err) });
-    }
-  };
-
   const loop = async () => {
-    await syncToolDefinitions().catch((err) => log.error("tool sync failed", { err: safeErrorMessage(err) }));
-    await recoverInterruptedRuns().catch((err) => log.error("run recovery failed", { err: safeErrorMessage(err) }));
-    await resumeMemoryOutbox().catch((err) => log.error("memory outbox resume failed", { err: safeErrorMessage(err) }));
+    await startupTasks();
     let lastMaintenance = 0;
     let lastHealth = 0;
     while (!stopping) {
@@ -128,7 +144,7 @@ export function startWorker(opts: { concurrency?: number; pollMs?: number } = {}
         if (free > 0) {
           const jobs = await claim(workerId, free, LEASE_MS);
           for (const job of jobs) {
-            const p = runJob(job).finally(() => running.delete(p));
+            const p = runJob(job, workerId).finally(() => running.delete(p));
             running.add(p);
           }
           if (jobs.length > 0) continue;

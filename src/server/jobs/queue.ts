@@ -110,6 +110,20 @@ export async function claim(workerId: string, limit: number, leaseMs: number, ty
   return runnable;
 }
 
+/** When the next queued job (optionally of these types) becomes ready, or null when none is queued. */
+export async function nextDueAt(types?: JobType[]): Promise<Date | null> {
+  const typeFilter =
+    types && types.length
+      ? sql`and type in (${sql.join(
+          types.map((t) => sql`${t}`),
+          sql`, `,
+        )})`
+      : sql``;
+  const result = await db().execute(sql`select min(run_at) as due from job where status = 'queued' ${typeFilter}`);
+  const due = rowsOf<{ due: string | Date | null }>(result)[0]?.due;
+  return due ? new Date(due) : null;
+}
+
 export async function extendLease(jobId: string, workerId: string, leaseMs: number): Promise<void> {
   await db()
     .update(job)

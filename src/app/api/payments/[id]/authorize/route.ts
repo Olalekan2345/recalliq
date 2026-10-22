@@ -7,10 +7,13 @@
 import { z } from "zod";
 import { ApiError, handle, json, readJson, requireApiUser } from "@/server/http";
 import { authorizePayment } from "@/server/services/payments";
+import { scheduleDrain } from "@/server/jobs/drain";
 import { hitRateLimit } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Serverless hosting runs the queued work after the response (server/jobs/drain.ts).
+export const maxDuration = 300;
 
 const bodySchema = z.discriminatedUnion("decision", [
   z.object({ decision: z.literal("rejected") }),
@@ -29,5 +32,7 @@ export const POST = handle(async (req, ctx: { params: Promise<{ id: string }> })
   if (!rl.allowed) throw new ApiError(429, "Too many payment decisions; slow down", "rate_limited");
   const { id } = await ctx.params;
   const body = await readJson(req, bodySchema, 96 * 1024);
-  return json(await authorizePayment(user.id, id, body));
+  const result = await authorizePayment(user.id, id, body);
+  scheduleDrain();
+  return json(result);
 });

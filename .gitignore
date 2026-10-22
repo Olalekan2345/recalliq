@@ -31,3 +31,6 @@ Thumbs.db
 # design reference recordings (not part of the product)
 public/*.mp4
 public/references/
+
+# Vercel CLI project link
+.vercel

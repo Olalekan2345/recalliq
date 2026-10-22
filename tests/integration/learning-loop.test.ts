@@ -218,4 +218,19 @@ describe("learning loop", () => {
     const evalRuns = await db.select().from(agentRun).where(eq(agentRun.evaluationRunId, evalId));
     expect(evalRuns.every((r) => r.isEvaluation)).toBe(true);
   });
+
+  it("5. stepped one run at a time (serverless hosting), the evaluation reaches the same result", async () => {
+    const evalId = await createEvaluation(userId, { name: "decimals, stepped", tasks: [{ task: TASK }] });
+    const steps: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      const progress = await runEvaluation(evalId, undefined, { maxUnits: 1 });
+      steps.push(progress);
+      if (progress === "done") break;
+    }
+    expect(steps).toEqual(["more", "done"]); // baseline, then memory
+    const [ev] = await db.select().from(evaluationRun).where(eq(evaluationRun.id, evalId));
+    expect(ev!.status).toBe("completed");
+    expect(ev!.summary!.modes.baseline!.contradictedClaims).toBe(1);
+    expect(ev!.summary!.modes.memory!.contradictedClaims).toBe(0);
+  });
 });

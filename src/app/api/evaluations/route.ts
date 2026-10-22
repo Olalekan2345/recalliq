@@ -3,10 +3,13 @@ import { ApiError, handle, json, readJson, requireApiUser } from "@/server/http"
 import { createEvaluation } from "@/lib/ai/evaluation/harness";
 import { hitRateLimit } from "@/lib/security/rate-limit";
 import { listEvaluations } from "@/server/services/learning";
+import { scheduleDrain } from "@/server/jobs/drain";
 import { getTool } from "@/lib/ai/tools/registry";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Serverless hosting runs the queued work after the response (server/jobs/drain.ts).
+export const maxDuration = 300;
 
 const bodySchema = z.object({
   name: z.string().trim().min(3).max(120),
@@ -35,5 +38,6 @@ export const POST = handle(async (req) => {
     throw new ApiError(400, "Fault injection must target a registered free tool", "invalid_fault");
   }
   const id = await createEvaluation(user.id, body);
+  scheduleDrain();
   return json({ id }, 201);
 });

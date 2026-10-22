@@ -92,8 +92,12 @@ const schema = z.object({
   PAYMENT_MAX_PER_TX_ATOMIC: atomic,
   PAYMENT_MAX_PER_DAY_ATOMIC: atomic,
 
-  WORKER_MODE: z.enum(["inline", "external", "off"]).default("inline"),
+  // inline: polling worker inside the web server; external: `pnpm worker` elsewhere;
+  // serverless: no worker, requests drain the queue with after() (Vercel); off: nothing runs jobs.
+  WORKER_MODE: z.enum(["inline", "external", "serverless", "off"]).default("inline"),
   WORKER_CONCURRENCY: int(3, 1, 16),
+  // Vercel Cron sends it as a bearer token to /api/jobs/drain.
+  CRON_SECRET: optionalString,
 
   AGENT_MAX_TOOL_CALLS: int(14, 1, 60),
   AGENT_MAX_ITERATIONS: int(12, 1, 40),

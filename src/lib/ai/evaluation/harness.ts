@@ -238,16 +238,25 @@ export function summarize(rows: ResultRow[]): EvaluationSummary {
   return { sampleSize: pairs, modes, conclusion, inconclusive };
 }
 
-/** Job handler: resumable — finished task×mode results are skipped. */
-export async function runEvaluation(evaluationRunId: string, heartbeat?: () => Promise<void>): Promise<void> {
+/**
+ * Job handler: resumable — finished task×mode results are skipped. With
+ * `maxUnits` (serverless hosting, where one function cannot run a whole
+ * evaluation) it runs at most that many task×mode units and returns "more"
+ * while work remains; units that already failed are not retried by a later step.
+ */
+export async function runEvaluation(evaluationRunId: string, heartbeat?: () => Promise<void>, opts: { maxUnits?: number } = {}): Promise<"done" | "more"> {
   const [evalRow] = await db().select().from(evaluationRun).where(eq(evaluationRun.id, evaluationRunId)).limit(1);
-  if (!evalRow || evalRow.status === "completed" || evalRow.status === "cancelled") return;
+  if (!evalRow || evalRow.status === "completed" || evalRow.status === "cancelled") return "done";
   await db().update(evaluationRun).set({ status: "running" }).where(eq(evaluationRun.id, evaluationRunId));
   const rows = await db().select().from(evaluationResult).where(eq(evaluationResult.evaluationRunId, evaluationRunId));
+  const stepped = opts.maxUnits !== undefined;
+  let units = 0;
   for (let i = 0; i < evalRow.tasks.length; i++) {
     for (const mode of ["baseline", "memory"] as const) {
       const row = rows.find((r) => r.taskIndex === i && r.mode === mode);
-      if (row?.status === "done") continue;
+      if (row?.status === "done" || (stepped && row?.status === "failed")) continue;
+      if (stepped && units >= opts.maxUnits!) return "more";
+      units++;
       try {
         await runOne(evalRow, i, mode, heartbeat);
       } catch (err) {
@@ -264,4 +273,5 @@ export async function runEvaluation(evaluationRunId: string, heartbeat?: () => P
     .update(evaluationRun)
     .set({ status: "completed", summary: summarize(finalRows), completedAt: new Date() })
     .where(eq(evaluationRun.id, evaluationRunId));
+  return "done";
 }

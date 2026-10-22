@@ -18,6 +18,7 @@ import { FinalCta } from "@/components/marketing/final-cta";
 import { ALL_TOOLS } from "@/lib/ai/tools/registry";
 import { latestHealth } from "@/server/services/health";
 import { loadPublicStats } from "@/server/services/public-stats";
+import { scheduleHealthRefresh } from "@/server/jobs/drain";
 import { relativeTime } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +62,8 @@ async function loadHealth() {
 
 export default async function LandingPage() {
   const [health, stats] = await Promise.all([loadHealth(), loadPublicStats()]);
+  // Without a worker process (serverless hosting), visits keep the status panel fresh.
+  scheduleHealthRefresh();
   const tools: PublicTool[] = ALL_TOOLS.map((t) => ({ id: t.id, name: t.name, summary: t.summary, provider: t.provider, paid: t.pricingType === "x402" }));
 
   return (
