@@ -16,10 +16,9 @@ export function Autopsy() {
   const progress = useSceneProgress(ref, ["start 0.9", "center 0.55"]);
   // Static until hydrated (matches the server HTML), then follows the user's motion preference.
   const reduced = !useAmbientMotion();
-  const leftRotate = useTransform(progress, [0, 1], reduced ? [0, 0] : [22, 0]);
-  const rightRotate = useTransform(progress, [0, 1], reduced ? [0, 0] : [-22, 0]);
-  const leftX = useTransform(progress, [0, 1], reduced ? [0, 0] : [-60, 0]);
-  const rightX = useTransform(progress, [0, 1], reduced ? [0, 0] : [60, 0]);
+  // Rotation only: the panels stack on narrow screens, where a sideways slide would clip them.
+  const leftRotate = useTransform(progress, [0, 1], reduced ? [0, 0] : [16, 0]);
+  const rightRotate = useTransform(progress, [0, 1], reduced ? [0, 0] : [-16, 0]);
   const bridge = useTransform(progress, [0.45, 1], [0, 1]);
 
   return (
@@ -42,7 +41,7 @@ export function Autopsy() {
         </div>
 
         <div ref={ref} className="perspective-1200 mt-16 grid items-center gap-6 lg:grid-cols-[1fr_auto_1fr]">
-          <m.article style={{ rotateY: leftRotate, x: leftX }} className="glass-dark rounded-3xl p-6">
+          <m.article style={{ rotateY: leftRotate }} className="glass-dark rounded-3xl p-6">
             <p className="text-xs font-medium uppercase tracking-wider text-on-dark-muted">Earlier run</p>
             <h3 className="mt-2 font-display text-lg font-semibold">The answer overstated an amount</h3>
             <div className="mt-5 space-y-3 text-sm">
@@ -61,7 +60,7 @@ export function Autopsy() {
             <Bridge icon={DatabaseZap} label="Lesson on Walrus" progress={bridge} />
           </div>
 
-          <m.article style={{ rotateY: rightRotate, x: rightX }} className="glass-dark ring-brand rounded-3xl p-6">
+          <m.article style={{ rotateY: rightRotate }} className="glass-dark ring-brand rounded-3xl p-6">
             <p className="text-xs font-medium uppercase tracking-wider text-on-dark-muted">Later run</p>
             <h3 className="mt-2 font-display text-lg font-semibold">The learned rule changes the plan</h3>
             <div className="mt-5 space-y-3 text-sm">

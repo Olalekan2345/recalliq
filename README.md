@@ -40,7 +40,7 @@ Next.js server ──────────────┬──────�
                                    PostgreSQL (Drizzle, migrations)
 ```
 
-Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Security: [docs/SECURITY.md](docs/SECURITY.md) · Deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · Design decisions & deviations: [docs/DECISIONS.md](docs/DECISIONS.md) · Hackathon checklist: [docs/HACKATHON.md](docs/HACKATHON.md)
+Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · UI & design system: [docs/DESIGN.md](docs/DESIGN.md) · Security: [docs/SECURITY.md](docs/SECURITY.md) · Deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · Design decisions & deviations: [docs/DECISIONS.md](docs/DECISIONS.md) · Hackathon checklist: [docs/HACKATHON.md](docs/HACKATHON.md)
 
 ## Status (honest)
 

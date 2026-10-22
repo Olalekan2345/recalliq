@@ -43,6 +43,24 @@ test("landing page explains the product without fabricated stats", async ({ page
   expect(body).not.toMatch(/testimonial/i);
 });
 
+test("“See How It Learns” takes you to the agent pipeline", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "See How It Learns" }).click();
+  await expect(page).toHaveURL(/#how$/);
+  await expect(page.getByRole("heading", { name: /Every run follows the same honest path/ })).toBeInViewport();
+});
+
+test("mobile navigation drawer opens and closes with Escape", async ({ page }) => {
+  await signUp(page);
+  const open = page.getByRole("button", { name: "Open navigation" });
+  test.skip(!(await open.isVisible()), "Sidebar is always visible at this width");
+  await open.click();
+  const drawer = page.getByRole("dialog", { name: "Navigation" });
+  await expect(drawer.getByRole("link", { name: "Memory Vault" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(drawer).toBeHidden();
+});
+
 test("protected pages require a session", async ({ page }) => {
   await page.goto("/memory");
   await page.waitForURL("**/sign-in");
