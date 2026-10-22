@@ -15,7 +15,7 @@ const Film = dynamic(() => import("./film").then((m) => m.Film), { ssr: false, l
 function FilmPlaceholder() {
   return (
     <div className="relative" style={{ height: `${FILM_VH}vh` }}>
-      <div className="sticky top-0 h-screen bg-[#04081c]" />
+      <div className="cine-stage sticky top-0 h-screen" />
     </div>
   );
 }
@@ -42,17 +42,17 @@ function LazyFilm() {
 export function CinematicSection() {
   return (
     <>
-      <Scene id="inside" labelledBy="inside-title" className="scene-midnight isolate">
+      <Scene id="inside" labelledBy="inside-title" tone="lavender" from="ice" className="isolate">
         <header className="mx-auto max-w-6xl px-4 pb-14 pt-24 md:px-6 md:pt-28">
           <Eyebrow>Inside RecallIQ</Eyebrow>
           <MaskedHeading
             id="inside-title"
             lines={["Intelligence That Learns."]}
-            wordClassName={() => "brand-gradient-text-light"}
-            className="mt-5 font-display text-4xl font-semibold leading-[1.06] tracking-tight md:text-6xl"
+            wordClassName={() => "brand-gradient-text"}
+            className="mt-5 font-display text-4xl font-semibold leading-[1.06] tracking-[-0.03em] md:text-6xl"
           />
           <Reveal>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-on-dark-muted md:text-lg">
+            <p className="mt-6 max-w-2xl text-base leading-7 text-scene-muted md:text-lg">
               See how RecallIQ investigates real blockchain activity, remembers what matters, verifies its decisions, and becomes more informed with every
               experience.
             </p>

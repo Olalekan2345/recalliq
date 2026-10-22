@@ -25,7 +25,7 @@ import {
 
 const CAPSULES = [
   { label: "Lessons", type: "failure", color: "#ff8fab" },
-  { label: "Corrections", type: "correction", color: "#5fe0ff" },
+  { label: "Corrections", type: "correction", color: "#18ccf9" },
   { label: "Strategies", type: "strategy", color: "#7ef0c1" },
   { label: "Tool experience", type: "tool_reliability", color: "#8ea6ff" },
 ];
@@ -35,10 +35,10 @@ function Visual({ id }: { id: string }) {
     case "investigate":
       return (
         <figure>
-          <div className="cine-screen overflow-hidden rounded-xl border-[6px] border-[#0b0f26]">
+          <div className="cine-screen overflow-hidden rounded-xl border-[6px] border-[#151a2e] dark:border-[#0b0f26]">
             <WorkspaceScreen />
           </div>
-          <div className="mx-auto h-3 w-[104%] -translate-x-[2%] rounded-b-2xl bg-gradient-to-b from-[#1a2052] to-[#0c1030]" aria-hidden />
+          <div className="cine-deck mx-auto h-3 w-[104%] -translate-x-[2%] rounded-b-2xl" aria-hidden />
         </figure>
       );
     case "execute":
@@ -84,7 +84,7 @@ function Visual({ id }: { id: string }) {
                 <ToolCard key={t.toolId} name={t.name} state={states[t.toolId as keyof typeof states] ?? "offered"} />
               ))}
           </div>
-          <PaidDecisionNote className="text-on-dark-muted" />
+          <PaidDecisionNote className="text-scene-muted" />
         </div>
       );
     }
@@ -94,7 +94,7 @@ function Visual({ id }: { id: string }) {
           <HoloEmblem size={140} />
           <Link
             href={FINAL.cta.href}
-            className="bg-brand-gradient mt-8 inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050920]"
+            className="bg-brand-gradient mt-8 inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             {FINAL.cta.label} <ArrowRight className="size-4" aria-hidden />
           </Link>
@@ -110,16 +110,16 @@ export function StackedChapters() {
         const heading = c.beats.length ? c.beats.map((b) => b.text).join(" ") : FINAL.headline;
         return (
           <Reveal as="li" key={c.id}>
-            <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#7fe3ff]">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-scene-accent">
               {String(i + 1).padStart(2, "0")} · {c.label}
             </p>
-            <h3 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-tight text-on-dark">{heading}</h3>
-            <p className="mt-3 text-base leading-7 text-on-dark-muted">{c.id === "evolve" ? FINAL.body : c.summary}</p>
+            <h3 className="mt-3 font-display text-3xl font-semibold leading-tight tracking-[-0.03em] text-scene-fg">{heading}</h3>
+            <p className="mt-3 text-base leading-7 text-scene-muted">{c.id === "evolve" ? FINAL.body : c.summary}</p>
             <div className="mt-6">
               <Visual id={c.id} />
             </div>
-            {c.source === "recorded" && <p className="mt-3 text-xs text-on-dark-muted">{RECORDED_LABEL}</p>}
-            {c.source === "concept" && <p className="mt-3 text-xs text-on-dark-muted">Concept illustration of how lessons are kept, not a storage event.</p>}
+            {c.source === "recorded" && <p className="mt-3 text-xs text-scene-muted">{RECORDED_LABEL}</p>}
+            {c.source === "concept" && <p className="mt-3 text-xs text-scene-muted">Concept illustration of how lessons are kept, not a storage event.</p>}
           </Reveal>
         );
       })}

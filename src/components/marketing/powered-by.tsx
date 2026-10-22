@@ -32,7 +32,7 @@ const STACK: Array<{ mascot: MascotVariant; role: string; name: string; body: st
 /** Scene G: the infrastructure RecallIQ is built with. Statements of use, not of partnership. */
 export function PoweredBy() {
   return (
-    <Scene labelledBy="stack-title" className="scene-midnight isolate overflow-hidden">
+    <Scene id="built-with" labelledBy="stack-title" tone="soft" from="lavender" className="isolate overflow-hidden">
       <Aurora variant="cyan" />
       <div className="mx-auto max-w-6xl px-4 py-28 md:px-6 md:py-36">
         <div className="max-w-3xl">
@@ -40,31 +40,31 @@ export function PoweredBy() {
           <MaskedHeading
             id="stack-title"
             lines={["Infrastructure you", "can verify yourself."]}
-            wordClassName={(l) => (l === 1 ? "brand-gradient-text-light" : undefined)}
-            className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-tight md:text-6xl"
+            wordClassName={(l) => (l === 1 ? "brand-gradient-text" : undefined)}
+            className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-[-0.03em] md:text-6xl"
           />
         </div>
         <ul className="mt-14 grid gap-5 md:grid-cols-3">
           {STACK.map((s, i) => (
             <Reveal as="li" key={s.name} delay={i * 0.08}>
               <TiltCard className="h-full">
-                <article className="glass-dark flex h-full flex-col rounded-3xl p-6">
+                <article className="glass-scene flex h-full flex-col rounded-3xl p-6">
                   <div className="flex items-end gap-4">
-                    <div className="w-[104px] shrink-0 overflow-hidden rounded-2xl border border-white/15 shadow-[0_18px_40px_-18px_rgb(24_204_249/0.6)]">
+                    <div className="w-[104px] shrink-0 overflow-hidden rounded-2xl border border-scene-line shadow-[0_18px_36px_-18px_rgb(16_28_68/0.5)]">
                       <Mascot variant={s.mascot} decorative sizes="104px" className="h-auto w-full" />
                     </div>
                     <div className="pb-1">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-[#7fe3ff]">{s.role}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-scene-accent">{s.role}</p>
                       <h3 className="mt-1.5 font-display text-xl font-semibold leading-tight">{s.name}</h3>
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col">
-                    <p className="mt-5 flex-1 text-sm leading-6 text-on-dark-muted">{s.body}</p>
+                    <p className="mt-5 flex-1 text-sm leading-6 text-scene-muted">{s.body}</p>
                     <a
                       href={s.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-5 inline-flex w-fit items-center gap-1 rounded text-sm font-medium text-on-dark underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff]"
+                      className="mt-5 inline-flex w-fit items-center gap-1 rounded text-sm font-medium text-scene-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       Documentation <ArrowUpRight className="size-3.5" aria-hidden />
                       <span className="sr-only">(opens in a new tab)</span>
@@ -75,7 +75,7 @@ export function PoweredBy() {
             </Reveal>
           ))}
         </ul>
-        <p className="mt-10 max-w-3xl text-sm text-on-dark-muted">
+        <p className="mt-10 max-w-3xl text-sm text-scene-muted">
           RecallIQ is an independent project built with these services for the Walrus × Tatum Total Recall hackathon. Product names belong to their owners.
         </p>
       </div>

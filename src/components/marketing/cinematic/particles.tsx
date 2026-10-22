@@ -14,6 +14,8 @@ interface Particle {
 
 /**
  * Light particles converging on the hologram as the memory chapter plays.
+ * Additive glow on the dark stage; plain, deeper dots on the light one
+ * (additive blending vanishes against a pale background).
  * Convergence follows scroll progress through [from, to]; the loop only runs
  * while that window is on screen and the canvas is visible.
  */
@@ -61,7 +63,8 @@ export function ConvergingParticles({ progress, from, to, count = 140 }: { progr
       const cx = w / 2;
       const cy = h * 0.46;
       const reach = Math.max(w, h) * 0.55;
-      ctx.globalCompositeOperation = "lighter";
+      const dark = document.documentElement.classList.contains("dark");
+      ctx.globalCompositeOperation = dark ? "lighter" : "source-over";
       for (const pt of particles) {
         const swirl = pt.angle + (t / 1000) * pt.speed * 0.6 + ease * 2.2;
         const r = reach * pt.radius * (1 - ease) + 90 * pt.radius * ease;
@@ -69,7 +72,7 @@ export function ConvergingParticles({ progress, from, to, count = 140 }: { progr
         const y = cy + Math.sin(swirl) * r * 0.62;
         const twinkle = 0.6 + 0.4 * Math.sin(t / 400 + pt.phase);
         ctx.beginPath();
-        ctx.fillStyle = `hsla(${pt.hue}, 95%, 72%, ${0.75 * alpha * twinkle})`;
+        ctx.fillStyle = dark ? `hsla(${pt.hue}, 95%, 72%, ${0.75 * alpha * twinkle})` : `hsla(${pt.hue}, 85%, 55%, ${0.6 * alpha * twinkle})`;
         ctx.arc(x, y, pt.size, 0, Math.PI * 2);
         ctx.fill();
       }

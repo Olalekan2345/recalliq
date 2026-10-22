@@ -41,7 +41,7 @@ async function signUp(page: Page) {
 
 test("landing page explains the product without fabricated stats", async ({ page }) => {
   await gotoReady(page, "/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("AI that remembers. Intelligence that evolves.");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Your AI remembers. Your intelligence evolves.");
   await expect(page.getByRole("link", { name: "Launch RecallIQ" }).first()).toHaveAttribute("href", "/sign-up");
   await expect(page.getByRole("heading", { name: "Live integration status" })).toBeVisible();
   const body = await page.locator("body").innerText();
@@ -49,17 +49,18 @@ test("landing page explains the product without fabricated stats", async ({ page
   expect(body).not.toMatch(/testimonial/i);
 });
 
-test("“See How It Learns” takes you to the agent pipeline", async ({ page }) => {
+test("“See How It Works” takes you to Inside RecallIQ", async ({ page }) => {
   await gotoReady(page, "/");
-  await page.getByRole("link", { name: "See How It Learns" }).click();
-  await expect(page).toHaveURL(/#how$/);
-  await expect(page.getByRole("heading", { name: /Every run follows the same honest path/ })).toBeInViewport();
+  await page.getByRole("link", { name: "See How It Works" }).click();
+  await expect(page).toHaveURL(/#inside$/);
+  await expect(page.getByRole("heading", { name: "Intelligence That Learns." })).toBeInViewport();
 });
 
 test("Inside RecallIQ film: chapters, guided play, skip and CTA (desktop)", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 0) < 1024, "The scroll film runs on large screens only");
   await gotoReady(page, "/");
-  // The film is lazy-loaded once the page is idle; wait for it rather than assuming it is there.
+  // The film is lazy-loaded once the page is idle and its section is near; bring it close and wait for it.
+  await page.locator("#inside").scrollIntoViewIfNeeded();
   await expect(page.locator("[data-film]")).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole("heading", { name: "Intelligence That Learns." })).toBeVisible();
 
@@ -182,9 +183,23 @@ test("guest access is limited and labelled", async ({ page }) => {
   await expect(page.locator("main")).toContainText("Guest sessions cannot make payments");
 });
 
-test("dark mode toggles", async ({ page }) => {
+test("opens in the light theme even when the OS prefers dark", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  for (const path of ["/", "/sign-up", "/sign-in?guest=1"]) {
+    await gotoReady(page, path);
+    await expect(page.locator("html")).not.toHaveClass(/dark/);
+  }
+  // …and the dashboard, the first time a (guest) user lands in it.
+  await page.getByRole("button", { name: "Continue as guest" }).click();
+  await page.waitForURL("**/workspace");
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
+});
+
+test("dark mode is an optional setting that persists", async ({ page }) => {
   await gotoReady(page, "/");
   await page.getByRole("button", { name: "Change theme" }).click();
   await page.getByRole("menuitemradio", { name: "dark" }).click();
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await gotoReady(page, "/sign-in");
   await expect(page.locator("html")).toHaveClass(/dark/);
 });

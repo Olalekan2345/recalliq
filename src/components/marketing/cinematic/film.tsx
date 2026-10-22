@@ -79,7 +79,7 @@ const PANELS: Array<{ key: string; node: React.ReactNode; width: number; to: V3;
 
 const CAPSULES = [
   { label: "Lessons", type: "failure", color: "#ff8fab" },
-  { label: "Corrections", type: "correction", color: "#5fe0ff" },
+  { label: "Corrections", type: "correction", color: "#18ccf9" },
   { label: "Strategies", type: "strategy", color: "#7ef0c1" },
   { label: "Tool experience", type: "tool_reliability", color: "#8ea6ff" },
   { label: "Spending lessons", type: "cost_efficiency", color: "#c4adff" },
@@ -155,9 +155,12 @@ export function Film() {
     [0.515, 1],
     [0.545, 0],
   ]);
+  // The workstation desk clears for the emblem reveal (on the light stage its edge reads as a horizon line).
   const stationFade = useKF(p, [
     [0.52, 0],
     [0.58, 1],
+    [0.84, 1],
+    [0.9, 0],
   ]);
   // The screen dims while the hologram has the stage.
   const screenFade = useKF(p, [
@@ -222,7 +225,7 @@ export function Film() {
 
   return (
     <div ref={filmRef} data-film="" className="relative" style={{ height: `${FILM_VH}vh` }}>
-      <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden bg-[#04081c]">
+      <div ref={stageRef} className="cine-stage sticky top-0 h-screen overflow-hidden text-scene-fg">
         <Backdrop p={p} orbit={orbit} />
         <LightLines p={p} />
 
@@ -246,8 +249,11 @@ export function Film() {
         <ConvergingParticles progress={p} from={0.33} to={0.5} />
 
         {/* Scrim keeps the overlay copy readable over the scene */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-[46%] bg-gradient-to-r from-[#04081c]/85 via-[#04081c]/40 to-transparent" aria-hidden />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#04081c]/80 to-transparent" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 w-[46%] bg-gradient-to-r from-sec-lavender/85 via-sec-lavender/40 to-transparent"
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-sec-ice/85 to-transparent" aria-hidden />
 
         <Copy p={p} />
         <Captions p={p} />
@@ -263,12 +269,14 @@ export function Film() {
                   type="button"
                   onClick={() => goTo(c.range[0] + 0.012)}
                   aria-current={chapter === i ? "step" : undefined}
-                  className="group flex items-center justify-end gap-3 rounded-md px-1 py-0.5 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff]"
+                  className="group flex items-center justify-end gap-3 rounded-md px-1 py-0.5 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span
                     className={cn(
-                      "text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity",
-                      chapter === i ? "text-on-dark opacity-100" : "text-on-dark-muted opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100",
+                      "rounded-full px-2 py-0.5 text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity",
+                      chapter === i
+                        ? "bg-card/85 text-scene-fg opacity-100 shadow-sm"
+                        : "text-scene-muted opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100",
                     )}
                   >
                     {c.label}
@@ -276,7 +284,7 @@ export function Film() {
                   <span
                     className={cn(
                       "block rounded-full transition-all",
-                      chapter === i ? "bg-brand-gradient h-6 w-1.5" : i < chapter ? "size-1.5 bg-[#7fe3ff]/70" : "size-1.5 bg-white/25",
+                      chapter === i ? "bg-brand-gradient h-6 w-1.5" : i < chapter ? "size-1.5 bg-scene-accent/70" : "size-1.5 bg-scene-fg/20",
                     )}
                     aria-hidden
                   />
@@ -291,7 +299,7 @@ export function Film() {
           <button
             type="button"
             onClick={playing ? stop : play}
-            className="glass-dark inline-flex h-9 items-center gap-2 rounded-full px-4 text-xs font-medium text-on-dark transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff]"
+            className="glass-scene inline-flex h-9 items-center gap-2 rounded-full px-4 text-xs font-medium text-scene-fg transition-colors hover:bg-scene-raise-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {playing ? (
               <Pause className="size-3.5" aria-hidden />
@@ -304,7 +312,7 @@ export function Film() {
           </button>
           <ScrollLink
             to="after-film"
-            className="inline-flex h-9 items-center rounded-full px-3 text-xs font-medium text-on-dark-muted underline-offset-4 hover:text-on-dark hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff]"
+            className="inline-flex h-9 items-center rounded-full px-3 text-xs font-medium text-scene-muted underline-offset-4 hover:text-scene-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Skip film
           </ScrollLink>
@@ -387,7 +395,7 @@ function Backdrop({ p, orbit }: { p: MV; orbit: MV }) {
       <m.div style={{ opacity: reveal }} className="absolute inset-0">
         <div className="absolute left-1/2 top-[40%] h-[80%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(95_224_255/0.35),rgb(50_84_228/0.18)_50%,transparent)] blur-2xl" />
       </m.div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgb(2_4_14/0.7))]" />
+      <div className="cine-vignette absolute inset-0" />
     </div>
   );
 }
@@ -416,7 +424,7 @@ function LightLines({ p }: { p: MV }) {
             y1={r(Math.sin(a) * 26)}
             x2={r(Math.cos(a) * 520)}
             y2={r(Math.sin(a) * 340)}
-            stroke={i % 3 === 0 ? "#c4adff" : "#5fe0ff"}
+            stroke={i % 3 === 0 ? "#9976f9" : "#18ccf9"}
             strokeOpacity={0.55}
             strokeWidth={1.2}
           />
@@ -443,9 +451,9 @@ function Laptop({ fade, screen }: { fade: MV; screen: MV }) {
     <div className="preserve-3d absolute left-0 top-0">
       {/* Screen: stands on the hinge, tilted back */}
       <m.div className="absolute" style={{ width: 760, height: 475, left: -380, top: -475, originY: 1, rotateX: 8, opacity: screen }}>
-        <div className="cine-screen size-full overflow-hidden rounded-[18px] border-[9px] border-[#0b0f26] bg-[#070b1f]">
+        <div className="cine-screen size-full overflow-hidden rounded-[18px] border-[9px] border-[#151a2e] bg-sec-soft dark:border-[#0b0f26] dark:bg-[#070b1f]">
           <WorkspaceScreen />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,rgb(255_255_255/0.08),transparent_40%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,rgb(255_255_255/0.14),transparent_40%)] dark:bg-[linear-gradient(120deg,rgb(255_255_255/0.08),transparent_40%)]" />
         </div>
       </m.div>
       {/* Reflection on the glass desk */}
@@ -459,11 +467,11 @@ function Laptop({ fade, screen }: { fade: MV; screen: MV }) {
       </m.div>
       {/* Deck with keyboard and trackpad, lying flat toward the viewer */}
       <m.div
-        className="absolute rounded-b-[28px] rounded-t-md border border-white/10 bg-gradient-to-b from-[#1a2052] to-[#0c1030]"
+        className="cine-deck absolute rounded-b-[28px] rounded-t-md"
         style={{ width: 820, height: 520, left: -410, top: 0, originY: 0, rotateX: 90, opacity: fade }}
       >
         <div className="cine-keys absolute inset-x-12 top-10 h-[200px] rounded-lg" />
-        <div className="absolute left-1/2 top-[270px] h-[170px] w-[300px] -translate-x-1/2 rounded-xl border border-white/10 bg-[#12184a]" />
+        <div className="cine-trackpad absolute left-1/2 top-[270px] h-[170px] w-[300px] -translate-x-1/2 rounded-xl" />
       </m.div>
     </div>
   );
@@ -560,8 +568,8 @@ function Hologram({ p, live }: { p: MV; live: boolean }) {
         <svg className="absolute left-0 top-0 overflow-visible" width="760" height="640" viewBox="-380 -320 760 640" aria-hidden>
           <defs>
             <linearGradient id="cine-link" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#5fe0ff" />
-              <stop offset="1" stopColor="#c4adff" />
+              <stop offset="0" stopColor="#18ccf9" />
+              <stop offset="1" stopColor="#9976f9" />
             </linearGradient>
           </defs>
           {PANELS.map((panel) => (
@@ -611,7 +619,7 @@ function StoryChip({ p, at, end, index, text }: { p: MV; at: readonly [number, n
     [end + 0.02, 0],
   ]);
   return (
-    <m.li style={{ opacity }} className="flex items-center gap-2 rounded-full border border-white/15 bg-[#0b112e]/85 px-3 py-1.5 text-xs text-on-dark">
+    <m.li style={{ opacity }} className="flex items-center gap-2 rounded-full border border-scene-line bg-card/90 px-3 py-1.5 text-xs text-scene-fg shadow-sm">
       <span className="bg-brand-gradient flex size-4 items-center justify-center rounded-full text-[10px] font-semibold text-white">{index + 1}</span>
       {text}
     </m.li>
@@ -662,16 +670,16 @@ function Workstation({ p }: { p: MV }) {
       ))}
       {/* Flat on the desk: local y = z - TRACE_Z + 300 (rotateX 90 around the centre). */}
       <m.svg
-        className="absolute overflow-visible drop-shadow-[0_0_6px_rgb(95_224_255/0.9)]"
+        className="absolute overflow-visible drop-shadow-[0_0_6px_rgb(24_204_249/0.6)]"
         style={{ left: -900, top: -300, y: -3, z: TRACE_Z, rotateX: 90, opacity: on }}
         width={1800}
         height={600}
         viewBox="0 0 1800 600"
         aria-hidden
       >
-        <m.path d="M 220 370 C 480 370, 620 180, 900 180" fill="none" stroke="#5fe0ff" strokeWidth={3} style={{ pathLength: link }} />
-        <m.path d="M 1580 370 C 1320 370, 1180 180, 900 180" fill="none" stroke="#c4adff" strokeWidth={3} style={{ pathLength: link }} />
-        <m.circle cx={900} cy={180} r={7} fill="#5fe0ff" style={{ opacity: link }} />
+        <m.path d="M 220 370 C 480 370, 620 180, 900 180" fill="none" stroke="#18ccf9" strokeWidth={3} style={{ pathLength: link }} />
+        <m.path d="M 1580 370 C 1320 370, 1180 180, 900 180" fill="none" stroke="#9976f9" strokeWidth={3} style={{ pathLength: link }} />
+        <m.circle cx={900} cy={180} r={7} fill="#18ccf9" style={{ opacity: link }} />
       </m.svg>
     </>
   );
@@ -715,10 +723,10 @@ function ToolStage({ p, live }: { p: MV; live: boolean }) {
         <ToolCardIn3D key={card.toolId} p={p} index={i} card={card} />
       ))}
       <m.div className="absolute w-72" style={{ left: -144, top: -40, x: EMBLEM[0] + 600, y: EMBLEM[1] + 250, z: EMBLEM[2] + 60, opacity: consent }}>
-        <div className="dark rounded-2xl border border-[#ffd166]/40 bg-[#1a1530]/95 p-4 text-left">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#ffd166]">Concept · approval</p>
-          <p className="mt-1.5 text-sm text-on-dark">When a paid analysis is worth it, you approve the exact payment in your own wallet.</p>
-          <p className="mt-1.5 text-xs text-on-dark-muted">Nothing is paid in this film.</p>
+        <div className="rounded-2xl border border-warning/40 bg-card p-4 text-left text-card-foreground shadow-[0_24px_50px_-26px_rgb(16_28_68/0.45)]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-warning">Concept · approval</p>
+          <p className="mt-1.5 text-sm">When a paid analysis is worth it, you approve the exact payment in your own wallet.</p>
+          <p className="mt-1.5 text-xs text-muted-foreground">Nothing is paid in this film.</p>
         </div>
       </m.div>
     </>
@@ -809,7 +817,7 @@ function BeatLine({ p, beat }: { p: MV; beat: Beat }) {
       style={{ opacity, y }}
       className={cn(
         "absolute bottom-0 left-0 font-display text-5xl font-semibold leading-[1.05] tracking-tight xl:text-6xl [@media(max-height:760px)]:text-4xl",
-        beat.accent ? "brand-gradient-text-light" : "text-on-dark",
+        beat.accent ? "brand-gradient-text" : "text-scene-fg",
       )}
     >
       {beat.text}
@@ -843,21 +851,20 @@ function Captions({ p }: { p: MV }) {
     [0.85, 0],
   ]);
   const pill =
-    "absolute left-[6%] top-[12%] flex items-center gap-2 rounded-full border border-white/12 bg-[#0b112e]/80 px-3 py-1.5 text-xs text-on-dark-muted";
+    "absolute left-[6%] top-[12%] flex items-center gap-2 rounded-full border border-scene-line bg-card/85 px-3 py-1.5 text-xs text-scene-muted shadow-sm";
   return (
     <div className="pointer-events-none" aria-hidden>
       <m.p style={{ opacity: recordedA }} className={pill}>
         <span className="size-1.5 rounded-full bg-success" /> {RECORDED_LABEL} · panels are the app’s own components
       </m.p>
       <m.p style={{ opacity: concept }} className={pill}>
-        <span className="size-1.5 rounded-full bg-[#c4adff]" /> Concept illustration of how lessons are kept, not a storage event
+        <span className="size-1.5 rounded-full bg-brand-violet" /> Concept illustration of how lessons are kept, not a storage event
       </m.p>
       <m.p style={{ opacity: recordedB }} className={pill}>
         <span className="size-1.5 rounded-full bg-success" /> {RECORDED_LABEL} · claims re-checked against fresh chain reads
       </m.p>
       <m.p style={{ opacity: decision }} className={pill}>
-        <span className="size-1.5 rounded-full bg-success" /> WorthIt’s decision in the recorded run ·{" "}
-        <PaidDecisionNote inline className="text-on-dark-muted" />
+        <span className="size-1.5 rounded-full bg-success" /> WorthIt’s decision in the recorded run · <PaidDecisionNote inline className="text-scene-muted" />
       </m.p>
     </div>
   );
@@ -876,15 +883,15 @@ function FinalCard({ p, onFocusCta }: { p: MV; onFocusCta: () => void }) {
   useMotionValueEvent(opacity, "change", (v) => setLive((l) => (l === v > 0.5 ? l : v > 0.5)));
   return (
     <m.div style={{ opacity, y }} className={cn("absolute inset-x-0 bottom-[9%] flex flex-col items-center text-center", !live && "pointer-events-none")}>
-      <p className="font-display text-2xl font-bold tracking-tight text-on-dark">
-        Recall<span className="brand-gradient-text-light">IQ</span>
+      <p className="font-display text-2xl font-bold tracking-tight text-scene-fg">
+        Recall<span className="brand-gradient-text">IQ</span>
       </p>
-      <h3 className="mt-3 font-display text-5xl font-semibold tracking-tight text-on-dark [@media(max-height:760px)]:text-4xl">{FINAL.headline}</h3>
-      <p className="mt-4 max-w-xl text-base leading-7 text-on-dark-muted">{FINAL.body}</p>
+      <h3 className="mt-3 font-display text-5xl font-semibold tracking-[-0.03em] text-scene-fg [@media(max-height:760px)]:text-4xl">{FINAL.headline}</h3>
+      <p className="mt-4 max-w-xl text-base leading-7 text-scene-muted">{FINAL.body}</p>
       <Link
         href={FINAL.cta.href}
         onFocus={onFocusCta}
-        className="bg-brand-gradient group mt-7 inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white shadow-[0_14px_40px_-12px_rgb(50_84_228/0.9)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#04081c]"
+        className="bg-brand-gradient group mt-7 inline-flex h-12 items-center gap-2 rounded-full px-7 text-base font-semibold text-white shadow-[0_16px_36px_-14px_rgb(49_86_227/0.75)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {FINAL.cta.label}
         <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />

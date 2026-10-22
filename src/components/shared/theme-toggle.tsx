@@ -14,7 +14,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     () => true,
     () => false,
   );
-  const Icon = !mounted ? Monitor : resolvedTheme === "dark" ? Moon : Sun;
+  const Icon = !mounted ? Sun : theme === "system" ? Monitor : resolvedTheme === "dark" ? Moon : Sun;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger

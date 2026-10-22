@@ -27,3 +27,7 @@ coverage/
 *.log
 .DS_Store
 Thumbs.db
+
+# design reference recordings (not part of the product)
+public/*.mp4
+public/references/

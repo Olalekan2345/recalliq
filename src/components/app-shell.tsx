@@ -58,7 +58,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                       active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
                     )}
                   >
-                    {active && <span className="bg-brand-gradient absolute inset-y-2 left-0 w-[3px] rounded-full" aria-hidden />}
+                    {active && <span className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-gradient-to-b from-brand-cyan to-primary" aria-hidden />}
                     <Icon className="size-4" aria-hidden />
                     {label}
                   </Link>
@@ -129,7 +129,7 @@ export function AppShell({ user, children }: { user: { name: string; email: stri
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
           <button
             type="button"
-            className="animate-in-fade absolute inset-0 bg-[#050920]/50 backdrop-blur-sm"
+            className="animate-in-fade absolute inset-0 bg-foreground/30 backdrop-blur-sm"
             aria-label="Close navigation"
             onClick={() => setOpen(false)}
           />

@@ -64,7 +64,7 @@ export default async function LandingPage() {
 
   return (
     <MotionProvider>
-      <div className="relative min-h-dvh overflow-x-clip bg-[#050920]">
+      <div className="relative min-h-dvh overflow-x-clip bg-background text-foreground">
         <SiteHeader />
         <main>
           <Hero />
@@ -74,10 +74,10 @@ export default async function LandingPage() {
             hydrated are replayed), so the page answers input sooner.
           */}
           <Suspense>
-            <CinematicSection />
+            <Problem />
           </Suspense>
           <Suspense>
-            <Problem />
+            <CinematicSection />
           </Suspense>
           <Suspense>
             <InsideAgent />
@@ -98,25 +98,30 @@ export default async function LandingPage() {
             <LearningScene stats={stats} />
           </Suspense>
 
-          <section id="faq" tabIndex={-1} className="scene-midnight scroll-mt-20 outline-none" aria-labelledby="faq-title">
+          <section
+            id="faq"
+            tabIndex={-1}
+            className="scroll-mt-20 bg-[linear-gradient(180deg,var(--sec-white),var(--sec-frost)_14rem)] text-scene-fg outline-none"
+            aria-labelledby="faq-title"
+          >
             <div className="mx-auto grid max-w-6xl gap-14 px-4 py-28 md:px-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
               <div className="min-w-0">
-                <h2 id="faq-title" className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+                <h2 id="faq-title" className="font-display text-3xl font-semibold tracking-[-0.03em] md:text-4xl">
                   Questions, answered plainly
                 </h2>
-                <div className="mt-8 divide-y divide-white/10 rounded-3xl border border-white/10 bg-white/[0.03]">
+                <div className="glass-scene mt-8 divide-y divide-scene-line rounded-3xl">
                   {FAQ.map((f) => (
                     <details key={f.q} className="group p-5 [&_summary::-webkit-details-marker]:hidden">
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-md font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fe3ff]">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-md font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         {f.q}
                         <span
-                          className="flex size-6 shrink-0 items-center justify-center rounded-full border border-white/15 text-on-dark-muted transition-transform group-open:rotate-45 motion-reduce:transition-none"
+                          className="flex size-6 shrink-0 items-center justify-center rounded-full border border-scene-line text-scene-muted transition-transform group-open:rotate-45 motion-reduce:transition-none"
                           aria-hidden
                         >
                           +
                         </span>
                       </summary>
-                      <p className="mt-3 text-sm leading-6 text-on-dark-muted">{f.a}</p>
+                      <p className="mt-3 text-sm leading-6 text-scene-muted">{f.a}</p>
                     </details>
                   ))}
                 </div>
@@ -126,24 +131,24 @@ export default async function LandingPage() {
                 <h2 id="status-heading" className="font-display text-xl font-semibold tracking-tight">
                   Live integration status
                 </h2>
-                <p className="mt-1 text-sm text-on-dark-muted">Recorded by the background worker from real health checks.</p>
+                <p className="mt-1 text-sm text-scene-muted">Recorded by the background worker from real health checks.</p>
                 {health && health.length > 0 ? (
                   <ul className="mt-6 space-y-2">
                     {health.map((h) => (
-                      <li key={h.integration} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                      <li key={h.integration} className="glass-scene rounded-2xl p-4">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm font-medium">{NAMES[h.integration] ?? h.integration}</span>
                           <HealthBadge status={h.status} />
                         </div>
-                        <p className="mt-1 truncate text-xs text-on-dark-muted" title={h.detail ?? ""}>
+                        <p className="mt-1 truncate text-xs text-scene-muted" title={h.detail ?? ""}>
                           {h.detail}
                         </p>
-                        <p className="mt-1 text-xs text-on-dark-muted">checked {relativeTime(h.checkedAt)}</p>
+                        <p className="mt-1 text-xs text-scene-muted">checked {relativeTime(h.checkedAt)}</p>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-6 rounded-2xl border border-dashed border-white/15 p-4 text-sm text-on-dark-muted">
+                  <p className="mt-6 rounded-2xl border border-dashed border-scene-line p-4 text-sm text-scene-muted">
                     No health checks recorded yet on this deployment.
                   </p>
                 )}
@@ -154,16 +159,16 @@ export default async function LandingPage() {
           <FinalCta />
         </main>
 
-        <footer className="scene-midnight border-t border-white/10">
+        <footer className="border-t border-scene-line bg-sec-white text-scene-fg">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[minmax(0,1.4fr)_repeat(2,minmax(0,1fr))] md:px-6">
             <div>
-              <Logo tone="light" />
-              <p className="mt-4 max-w-sm text-sm leading-6 text-on-dark-muted">
+              <Logo />
+              <p className="mt-4 max-w-sm text-sm leading-6 text-scene-muted">
                 An evidence-driven investigation agent for Sui. Investigations use live Mainnet data. Nothing here is financial advice.
               </p>
             </div>
             <nav aria-label="Product">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-on-dark-muted">Product</h2>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-scene-muted">Product</h2>
               <ul className="mt-4 space-y-2 text-sm">
                 {[
                   ["/workspace", "Workspace"],
@@ -172,7 +177,7 @@ export default async function LandingPage() {
                   ["/sign-in?guest=1", "Try as guest"],
                 ].map(([href, label]) => (
                   <li key={href}>
-                    <Link href={href!} className="text-on-dark hover:underline">
+                    <Link href={href!} className="text-scene-fg hover:text-scene-accent hover:underline">
                       {label}
                     </Link>
                   </li>
@@ -180,7 +185,7 @@ export default async function LandingPage() {
               </ul>
             </nav>
             <nav aria-label="Built with">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-on-dark-muted">Built with</h2>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-scene-muted">Built with</h2>
               <ul className="mt-4 space-y-2 text-sm">
                 {[
                   ["https://docs.wal.app/walrus-memory/", "Walrus Memory"],
@@ -188,7 +193,7 @@ export default async function LandingPage() {
                   ["https://github.com/x402-foundation/x402", "x402"],
                 ].map(([href, label]) => (
                   <li key={href}>
-                    <a href={href} target="_blank" rel="noreferrer" className="text-on-dark hover:underline">
+                    <a href={href} target="_blank" rel="noreferrer" className="text-scene-fg hover:text-scene-accent hover:underline">
                       {label}
                       <span className="sr-only"> (opens in a new tab)</span>
                     </a>
@@ -197,8 +202,8 @@ export default async function LandingPage() {
               </ul>
             </nav>
           </div>
-          <div className="border-t border-white/10">
-            <p className="mx-auto max-w-6xl px-4 py-6 text-xs text-on-dark-muted md:px-6">
+          <div className="border-t border-scene-line">
+            <p className="mx-auto max-w-6xl px-4 py-6 text-xs text-scene-muted md:px-6">
               Built for the Walrus × Tatum Total Recall hackathon. Product names belong to their owners.
             </p>
           </div>

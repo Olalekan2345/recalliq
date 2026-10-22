@@ -6,7 +6,7 @@ import "./globals.css";
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 // Display face for headings: rounded geometric forms that echo the logo's wordmark.
-const display = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap", weight: ["500", "600", "700"] });
+const display = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap", weight: ["300", "500", "600", "700"] });
 
 export const metadata: Metadata = {
   title: { default: "RecallIQ — AI that remembers. Intelligence that evolves.", template: "%s · RecallIQ" },
@@ -16,10 +16,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f8ff" },
-    { media: "(prefers-color-scheme: dark)", color: "#070b1f" },
-  ],
+  // The app opens in the light theme whatever the OS setting, so the browser chrome matches it.
+  themeColor: "#f8fbff",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
