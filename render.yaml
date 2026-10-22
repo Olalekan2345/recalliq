@@ -1,0 +1,49 @@
+# Render Blueprint: web service (with inline worker) + managed PostgreSQL.
+# Long-running Node processes keep native gRPC (HTTP/2) connections to Tatum
+# and run the durable job worker. Secrets are set in the Render dashboard.
+databases:
+  - name: recalliq-db
+    plan: basic-256mb
+    databaseName: recalliq
+    postgresMajorVersion: "17"
+
+services:
+  - type: web
+    name: recalliq
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    preDeployCommand: pnpm db:migrate
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: recalliq-db
+          property: connectionString
+      - key: WORKER_MODE
+        value: inline
+      - key: PORT
+        value: "3300"
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: LLM_PROVIDER
+        value: google
+      - key: LLM_MODEL
+        value: gemini-3.5-flash-lite
+      - key: GOOGLE_GENERATIVE_AI_API_KEY
+        sync: false
+      - key: TATUM_MAX_RPS
+        value: "3"
+      - key: TATUM_API_KEY
+        sync: false
+      - key: MEMWAL_KEY
+        sync: false
+      - key: MEMWAL_ACCOUNT_ID
+        sync: false
+      - key: X402_PAY_TO
+        sync: false
+      - key: X402_ALLOWED_RECIPIENTS
+        sync: false
+      - key: X402_FORENSICS_PRICE_ATOMIC
+        sync: false
