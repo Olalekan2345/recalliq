@@ -4,6 +4,7 @@
 import { createRequire } from "node:module";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { build, chunks, pcmFmt } from "./wav.mjs";
 
 const require = createRequire("C:/Users/USER/Desktop/RECALL/package.json");
 require("dotenv").config({ path: "C:/Users/USER/Desktop/RECALL/.env", quiet: true });
@@ -17,23 +18,6 @@ mkdirSync(OUT, { recursive: true });
 
 const { voice, style, segments } = JSON.parse(readFileSync(path.join(import.meta.dirname, "narration.json"), "utf8"));
 const only = new Set(process.argv.slice(2));
-
-function wav(pcm, rate) {
-  const h = Buffer.alloc(44);
-  h.write("RIFF", 0);
-  h.writeUInt32LE(36 + pcm.length, 4);
-  h.write("WAVEfmt ", 8);
-  h.writeUInt32LE(16, 16);
-  h.writeUInt16LE(1, 20); // PCM
-  h.writeUInt16LE(1, 22); // mono
-  h.writeUInt32LE(rate, 24);
-  h.writeUInt32LE(rate * 2, 28);
-  h.writeUInt16LE(2, 32);
-  h.writeUInt16LE(16, 34);
-  h.write("data", 36);
-  h.writeUInt32LE(pcm.length, 40);
-  return Buffer.concat([h, pcm]);
-}
 
 const durationsFile = path.join(OUT, "durations.json");
 let durations = {};
@@ -63,11 +47,22 @@ for (const seg of segments) {
   const part = json?.candidates?.[0]?.content?.parts?.find((p) => p.inlineData);
   if (!part) throw new Error(`${seg.id}: no audio in response`);
   const raw = Buffer.from(part.inlineData.data, "base64");
-  // The API returns either a complete WAV or raw 16-bit PCM ("audio/L16;rate=…").
-  const isWav = raw.toString("ascii", 0, 4) === "RIFF";
-  const rate = isWav ? raw.readUInt32LE(24) : Number(/rate=(\d+)/.exec(part.inlineData.mimeType)?.[1] ?? 24000);
-  const pcm = isWav ? raw.subarray(44) : raw;
-  writeFileSync(path.join(OUT, `${seg.id}.wav`), wav(pcm, rate));
+  // Either a complete WAV (audio followed by a C2PA provenance chunk) or raw 16-bit PCM
+  // ("audio/L16;rate=…"). Chunks are parsed by id so only the audio is played; the
+  // provenance chunk is kept after it.
+  let rate;
+  let pcm;
+  let extra = [];
+  if (raw.toString("ascii", 0, 4) === "RIFF") {
+    const cs = chunks(raw);
+    rate = cs.find((c) => c.id === "fmt ").data.readUInt32LE(4);
+    pcm = cs.find((c) => c.id === "data").data;
+    extra = cs.filter((c) => c.id !== "fmt " && c.id !== "data");
+  } else {
+    rate = Number(/rate=(\d+)/i.exec(part.inlineData.mimeType)?.[1] ?? 24000);
+    pcm = raw;
+  }
+  writeFileSync(path.join(OUT, `${seg.id}.wav`), build({ fmt: pcmFmt(rate), pcm, extra }));
   durations[seg.id] = Math.round((pcm.length / 2 / rate) * 1000) / 1000;
   console.log(`${seg.id}: ${durations[seg.id]} s (${part.inlineData.mimeType})`);
 }

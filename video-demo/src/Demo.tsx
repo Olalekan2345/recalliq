@@ -1,8 +1,6 @@
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import cues from "./cues.json";
-import gains from "./gains.json";
 import timeline from "./timeline.json";
-import durations from "../assets/audio/durations.json";
 import { Architecture, EndCard, LogoIntro } from "./components/Brand";
 import { Footage, type Box, type Cam } from "./components/Footage";
 import { Captions, Note, SectionTitle, SourceTag, TimeLapse, type SourceKind } from "./components/Overlays";
@@ -81,18 +79,6 @@ const REC_A = { kind: "recorded" as const, text: "Earlier session · recorded 23
 const REC_B = { kind: "recorded" as const, text: "Later session · 23 Oct 2026 · a different question" };
 const SITE = { kind: "live" as const, text: "Public deployment · recalliq-seven.vercel.app" };
 
-// Music ducks under the voice and lifts in the gaps.
-const SPEECH = Object.entries(timeline.narration).map(([id, at]) => [at, at + (durations as Record<string, number>)[id]!] as const);
-function musicVolume(f: number) {
-  const t = f / FPS;
-  const inSpeech = SPEECH.some(([a, b]) => t >= a - 0.3 && t <= b + 0.3);
-  const near = SPEECH.reduce((m, [a, b]) => Math.min(m, Math.abs(t - a), Math.abs(t - b)), 99);
-  const duck = inSpeech ? 0.12 : 0.12 + Math.min(1, near / 0.6) * (0.32 - 0.12);
-  const fadeOut = interpolate(t, [TOTAL - 3, TOTAL - 0.2], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const fadeIn = interpolate(t, [0, 1], [0, 1], { extrapolateRight: "clamp" });
-  return duck * fadeOut * fadeIn;
-}
-
 export function Demo() {
   return (
     <AbsoluteFill style={{ backgroundColor: "#f8fbff" }}>
@@ -107,7 +93,7 @@ export function Demo() {
         from={11.2}
         rate={0.85}
         tag={{ kind: "recorded", text: "Real record · a claim the chain contradicted" }}
-        cams={[{ at: 0, scale: 1.5, x: 720, y: 520 }]}
+        cams={[{ at: 0, scale: 1.2, x: 720, y: 520 }]}
         boxes={[{ from: 0.5, to: 4.0, x: 456, y: 534, w: 330, h: 72 }]}
       />
       <Shot
@@ -117,7 +103,7 @@ export function Demo() {
         from={10.25}
         rate={0.9}
         tag={{ kind: "recorded", text: "Real record · that lesson, recalled from Walrus days later" }}
-        cams={[{ at: 0, scale: 1.55, x: 1630, y: 640 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1630, y: 640 }]}
         boxes={[{ from: 0.4, to: 3.2, x: 1404, y: 548, w: 452, h: 196 }]}
       />
       <Shot
@@ -126,7 +112,7 @@ export function Demo() {
         clip="lesson"
         from={12.8}
         tag={{ kind: "recorded", text: "Real record · the decision it changed" }}
-        cams={[{ at: 0, scale: 1.35, x: 1590, y: 560 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1590, y: 560 }]}
         boxes={[{ from: 0.5, to: 3.6, x: 1410, y: 624, w: 420, h: 112 }]}
       />
 
@@ -185,7 +171,7 @@ export function Demo() {
         clip="live-memory"
         from={5.1}
         tag={{ kind: "recorded", text: "Same run · Memory tab" }}
-        cams={[{ at: 0, scale: 1.4, x: 1630, y: 420 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1630, y: 420 }]}
         boxes={[
           { from: 0.4, to: 3.5, x: 1404, y: 392, w: 440, h: 40 },
           { from: 1.4, to: 3.5, x: 1404, y: 434, w: 440, h: 50 },
@@ -199,7 +185,7 @@ export function Demo() {
         from={10.2}
         rate={0.95}
         tag={{ kind: "recorded", text: "Same run · each lesson recalled from a Walrus blob" }}
-        cams={[{ at: 0, scale: 1.4, x: 1630, y: 590 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1630, y: 590 }]}
         boxes={[
           { from: 0.2, to: 3.2, x: 1404, y: 228, w: 440, h: 50 },
           { from: 0.6, to: 3.2, x: 1404, y: 436, w: 440, h: 50 },
@@ -216,7 +202,7 @@ export function Demo() {
         from={10.4}
         tag={{ kind: "recorded", text: "Same run · Memory tab" }}
         tagFrom={T}
-        cams={[{ at: 0, scale: 1.45, x: 1630, y: 640 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1630, y: 640 }]}
         boxes={[{ from: 0.9, to: 2.8, x: 1404, y: 548, w: 452, h: 196 }]}
       />
       <Shot start={64.3} end={67.6} clip="run-a" from={0} tag={REC_A} />
@@ -227,7 +213,7 @@ export function Demo() {
         from={11.2}
         rate={0.75}
         tag={REC_A}
-        cams={[{ at: 0, scale: 1.35, x: 830, y: 480 }]}
+        cams={[{ at: 0, scale: 1.2, x: 830, y: 480 }]}
         boxes={[
           { from: 0.1, to: 2.6, x: 446, y: 346, w: 780, h: 150 },
           { from: 2.4, to: 4.5, x: 456, y: 534, w: 330, h: 72 },
@@ -261,7 +247,7 @@ export function Demo() {
         clip="lesson"
         from={4.0}
         tag={{ kind: "recorded", text: "Memory Vault · exact text stored on Walrus" }}
-        cams={[{ at: 0, scale: 1.25, x: 860, y: 680 }]}
+        cams={[{ at: 0, scale: 1.2, x: 860, y: 680 }]}
         boxes={[{ from: 0.1, to: 2.4, x: 420, y: 520, w: 880, h: 420 }]}
       />
       <Shot
@@ -286,7 +272,7 @@ export function Demo() {
         from={4.4}
         rate={0.53}
         tag={REC_B}
-        cams={[{ at: 0, scale: 1.25, x: 760, y: 420 }]}
+        cams={[{ at: 0, scale: 1.2, x: 760, y: 420 }]}
         boxes={[{ from: 0.2, to: 5.3, x: 436, y: 288, w: 356, h: 60 }]}
       />
       <Shot
@@ -296,7 +282,7 @@ export function Demo() {
         from={8.8}
         rate={0.55}
         tag={REC_B}
-        cams={[{ at: 0, scale: 1.25, x: 760, y: 420 }]}
+        cams={[{ at: 0, scale: 1.2, x: 760, y: 420 }]}
         boxes={[{ from: 0.1, to: 3.7, x: 476, y: 346, w: 640, h: 50 }]}
       />
       <Shot
@@ -305,7 +291,7 @@ export function Demo() {
         clip="lesson"
         from={12.8}
         tag={{ kind: "recorded", text: "Recorded effect · from the lesson's influence trace" }}
-        cams={[{ at: 0, scale: 1.35, x: 1590, y: 520 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1590, y: 520 }]}
         boxes={[{ from: 0.2, to: 2.7, x: 1410, y: 624, w: 420, h: 112 }]}
       />
       <Shot
@@ -325,7 +311,7 @@ export function Demo() {
         from={15.0}
         rate={0.7}
         tag={{ kind: "recorded", text: "The lesson's trace · 5 later sessions retrieved it" }}
-        cams={[{ at: 0, scale: 1.3, x: 1590, y: 400 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1590, y: 400 }]}
         boxes={[
           { from: 0.1, to: 2.2, x: 1410, y: 166, w: 420, h: 50 },
           { from: 0.6, to: 2.2, x: 1410, y: 250, w: 420, h: 340 },
@@ -351,7 +337,7 @@ export function Demo() {
         from={6.8}
         rate={0.75}
         tag={{ kind: "recorded", text: "Tool Intelligence · the paid specialist and its real price" }}
-        cams={[{ at: 0, scale: 1.3, x: 1500, y: 700 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1500, y: 700 }]}
         boxes={[
           { from: 0.2, to: 4.4, x: 1140, y: 514, w: 716, h: 412 },
           { from: 1.4, to: 4.4, x: 1410, y: 658, w: 214, h: 46 },
@@ -363,7 +349,7 @@ export function Demo() {
         clip="live-memory"
         from={18.6}
         tag={{ kind: "recorded", text: "The new investigation's WorthIt decision" }}
-        cams={[{ at: 0, scale: 1.5, x: 1630, y: 560 }]}
+        cams={[{ at: 0, scale: 1.2, x: 1630, y: 560 }]}
         boxes={[{ from: 0.2, to: 3.3, x: 1400, y: 494, w: 458, h: 100 }]}
       />
       <Shot
@@ -405,13 +391,8 @@ export function Demo() {
         </FadeIn>
       </Sequence>
 
-      {/* ── Sound ────────────────────────────────────────────────── */}
-      <Audio src={staticFile("music/bed.wav")} volume={musicVolume} />
-      {Object.entries(timeline.narration).map(([id, at]) => (
-        <Sequence key={id} from={sec(at)}>
-          <Audio src={staticFile(`audio/${id}.wav`)} volume={(gains as Record<string, number>)[id] ?? 1} />
-        </Sequence>
-      ))}
+      {/* Sound: narration and ducked music, mixed sample-accurately by scripts/mix-audio.mjs. */}
+      <Audio src={staticFile("audio/soundtrack.wav")} />
 
       <Captions cues={cues} />
     </AbsoluteFill>

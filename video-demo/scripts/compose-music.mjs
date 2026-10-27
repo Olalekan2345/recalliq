@@ -78,16 +78,24 @@ for (let c = 0; c * CHORD_LEN < SECONDS + CHORD_LEN; c++) {
   }
 }
 
-// Bass: chord root an octave down, soft swell per bar.
-for (let s = 0; s < N; s++) {
-  const t = s / SR;
-  const c = Math.floor(t / CHORD_LEN) % CHORDS.length;
-  const f = hz(CHORDS[c][0] - 12);
-  const inBar = (t % BAR) / BAR;
-  const env = 0.55 + 0.45 * smooth(inBar / 0.15) * smooth((1 - inBar) / 0.6);
-  const v = (sinAt(f * t) + 0.25 * sinAt(2 * f * t)) * 0.06 * env * intensity(t);
-  L[s] += v;
-  R[s] += v;
+// Bass: chord root an octave down, soft swell per bar. The phase is accumulated (never
+// recomputed from absolute time), so the pitch can change at a chord without a jump in the
+// waveform; the frequency also glides over 40 ms instead of switching.
+{
+  let phase = 0;
+  let f = hz(CHORDS[0][0] - 12);
+  const glide = 1 - Math.exp(-1 / (0.04 * SR));
+  for (let s = 0; s < N; s++) {
+    const t = s / SR;
+    const c = Math.floor(t / CHORD_LEN) % CHORDS.length;
+    f += (hz(CHORDS[c][0] - 12) - f) * glide;
+    phase += f / SR;
+    const inBar = (t % BAR) / BAR;
+    const env = 0.55 + 0.45 * smooth(inBar / 0.15) * smooth((1 - inBar) / 0.6);
+    const v = (sinAt(phase) + 0.25 * sinAt(2 * phase)) * 0.06 * env * intensity(t);
+    L[s] += v;
+    R[s] += v;
+  }
 }
 
 // Arpeggio: eighth notes over the chord tones, two octaves up, enters after the intro.
@@ -102,10 +110,12 @@ for (let i = 0; ARP_START + i * step < SECONDS - 3; i++) {
   const pan = i % 2 ? 0.35 : -0.35;
   const vel = (0.75 + 0.25 * ((i % 4) === 0 ? 1 : 0)) * smooth((t0 - ARP_START) / 6);
   const s0 = Math.round(t0 * SR);
-  const s1 = Math.min(N, s0 + Math.round(1.4 * SR));
+  const len = 1.4;
+  const s1 = Math.min(N, s0 + Math.round(len * SR));
   for (let s = s0; s < s1; s++) {
     const dt = (s - s0) / SR;
-    const env = Math.min(1, dt / 0.005) * Math.exp(-dt / 0.3);
+    // Attack, exponential decay, and a final fade to true zero (no cut-off click).
+    const env = Math.min(1, dt / 0.005) * Math.exp(-dt / 0.3) * smooth((len - dt) / 0.25);
     const v = (sinAt(f * dt) + 0.3 * sinAt(2 * f * dt) + 0.08 * sinAt(3 * f * dt)) * env * 0.045 * vel * intensity(t0);
     L[s] += v * (1 - pan);
     R[s] += v * (1 + pan);
@@ -122,12 +132,15 @@ for (let b = Math.ceil(PULSE_FROM / BEAT); b * BEAT < PULSE_TO; b++) {
   const t0 = b * BEAT;
   const fadeIn = smooth((t0 - PULSE_FROM) / 8) * smooth((PULSE_TO - t0) / 6);
   const s0 = Math.round(t0 * SR);
+  const len = 0.6;
   let phase = 0;
-  for (let s = s0; s < Math.min(N, s0 + Math.round(0.35 * SR)); s++) {
+  for (let s = s0; s < Math.min(N, s0 + Math.round(len * SR)); s++) {
     const dt = (s - s0) / SR;
     const f = 48 + 42 * Math.exp(-dt / 0.03);
     phase += f / SR;
-    const v = sinAt(phase) * Math.exp(-dt / 0.12) * 0.11 * fadeIn * intensity(t0);
+    // 2 ms attack and a fade to true zero at the end (no cut-off click).
+    const env = Math.min(1, dt / 0.002) * Math.exp(-dt / 0.12) * smooth((len - dt) / 0.2);
+    const v = sinAt(phase) * env * 0.11 * fadeIn * intensity(t0);
     L[s] += v;
     R[s] += v;
   }

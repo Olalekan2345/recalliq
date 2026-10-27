@@ -37,4 +37,4 @@
 | 2:21–2:28 | 7 Close | Motion graphics (concept) | "How RecallIQ fits together — concept diagram": question → recall (Walrus) → WorthIt → Tatum → verify → autopsy → store (Walrus) → next session; x402 dashed from WorthIt | "RecallIQ brings persistent memory…" |
 | 2:28–2:37 | 7 Close | Motion graphics | Emblem, "An AI agent that learns from verified experience.", stack chips, recalliq-seven.vercel.app, github.com/Olalekan2345/recalliq | "Because software should learn from experience…" |
 
-Sound: narration (10 segments) over an original synthesised ambient bed that ducks to about −18 dB under the voice and lifts in the gaps. Captions are burned in and also delivered as `subtitles/recalliq-demo.srt`.
+Sound: one soundtrack mixed offline (`scripts/mix-audio.mjs`): narration (10 segments, levelled to −19 dB) over an original synthesised ambient bed that ducks smoothly under the voice and lifts in the gaps. Camera moves are gentle (at most 1.2×) and never crop past the edge of the recording. Captions are burned in and also delivered as `subtitles/recalliq-demo.srt`.

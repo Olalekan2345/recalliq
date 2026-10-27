@@ -56,13 +56,14 @@ export function Footage({
   const frame = useCurrentFrame();
   const t = frame / FPS;
   const cam = camAt(cams, t);
-  // Zoom about (x, y) and pull that point towards the frame centre as the zoom grows.
-  const pull = (cam.scale - 1) / Math.max(0.0001, cam.scale);
-  const tx = (960 - cam.x) * pull;
-  const ty = (540 - cam.y) * pull;
+  // Bring the focus point towards the frame centre, but never further than keeps the
+  // recording covering the whole frame: no cropped-in empty strips at the edges.
+  const s = Math.max(1, cam.scale);
+  const tx = Math.min(0, Math.max(1920 - 1920 * s, 960 - s * cam.x));
+  const ty = Math.min(0, Math.max(1080 - 1080 * s, 540 - s * cam.y));
   return (
     <AbsoluteFill style={{ overflow: "hidden", backgroundColor: "#f8fbff" }}>
-      <AbsoluteFill style={{ transformOrigin: `${cam.x}px ${cam.y}px`, transform: `translate(${tx}px, ${ty}px) scale(${cam.scale})` }}>
+      <AbsoluteFill style={{ transformOrigin: "0 0", transform: `translate(${tx}px, ${ty}px) scale(${s})` }}>
         <OffthreadVideo src={staticFile(`captures/${clip}.mp4`)} trimBefore={Math.round(from * FPS)} playbackRate={rate} muted />
         {boxes.map((b, i) => {
           const o = interpolate(t, [b.from, b.from + 0.35, b.to - 0.3, b.to], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });

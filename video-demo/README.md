@@ -18,10 +18,11 @@ The official 2:37 demo for the Walrus × Tatum Total Recall hackathon, produced 
 
 1. **Record** (`scripts/capture.mjs`, shot list in `scripts/shots.mjs`): Playwright drives the real app and Chromium's screencast captures every frame at 1920×1080; frames are timestamped on arrival and encoded to a constant 30 fps clip. A visible pointer is drawn for viewers; nothing else is added to the page. Shots run against a local instance signed in with a short-lived session created by `scripts/demo-session.mjs` (local only; `delete` removes it), and against the public deployment.
 2. **Map motion** (`scripts/motion-map.mjs`): finds when each recording scrolls or changes, so highlight boxes are timed to the footage.
-3. **Narrate** (`scripts/narrate.mjs`, text in `scripts/narration.json`): Gemini TTS, voice "Charon". `scripts/transcribe.mjs` transcribes each file to confirm the exact words.
-4. **Music** (`scripts/compose-music.mjs`): an original ambient bed synthesised from code.
-5. **Captions** (`scripts/build-captions.mjs`): cue boundaries snapped to real pauses; writes `src/cues.json`, `src/gains.json` and the SRT.
-6. **Edit and render** with Remotion (`src/`): `src/Demo.tsx` is the edit decision list.
+3. **Narrate** (`scripts/narrate.mjs`, text in `scripts/narration.json`): Gemini TTS, voice "Charon". The API returns a WAV whose audio is followed by a C2PA provenance chunk (it declares the audio AI-generated, with a SynthID watermark); `scripts/wav.mjs` parses chunks by id so only the audio is used, and keeps that chunk in the source files. `scripts/transcribe.mjs` transcribes each file to confirm the exact words.
+4. **Music** (`scripts/compose-music.mjs`): an original ambient bed synthesised from code (continuous phase, every note faded to true zero, so no clicks).
+5. **Captions** (`scripts/build-captions.mjs`): cue boundaries snapped to real pauses; writes `src/cues.json` and the SRT.
+6. **Mix** (`scripts/mix-audio.mjs`): narration levelled to −19 dB per segment with 5 ms edge fades, music ducked under the voice by a smoothed envelope, peaks under −1 dBFS. Mixing offline avoids per-frame volume steps in the renderer.
+7. **Edit and render** with Remotion (`src/`): `src/Demo.tsx` is the edit decision list. The camera zooms at most 1.2× and is clamped so the recording always fills the frame.
 
 ```bash
 cd video-demo
@@ -32,8 +33,9 @@ DEMO_STATE=<state.json> LIVE_RUN_URL=<run url> node scripts/capture.mjs <shot> �
 node scripts/demo-session.mjs delete
 # audio and captions
 node scripts/narrate.mjs            # needs GOOGLE_GENERATIVE_AI_API_KEY in ../.env
-node scripts/compose-music.mjs 175
+node scripts/compose-music.mjs 160
 node scripts/build-captions.mjs
+node scripts/mix-audio.mjs
 # preview and render
 pnpm studio
 pnpm render

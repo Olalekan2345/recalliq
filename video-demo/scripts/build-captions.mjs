@@ -1,6 +1,6 @@
-// Caption cues and narration gains from the narration script, the real voice files and the
-// timeline. Cue boundaries are snapped to the actual pauses in each recording, so the
-// captions follow the voice. Writes src/cues.json, src/gains.json and subtitles/recalliq-demo.srt.
+// Caption cues from the narration script, the real voice files and the timeline. Cue
+// boundaries are snapped to the actual pauses in each recording, so the captions follow the
+// voice. Writes src/cues.json and subtitles/recalliq-demo.srt. (Levels are set in mix-audio.mjs.)
 //   node scripts/build-captions.mjs
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
@@ -84,13 +84,10 @@ function analyse(file) {
 }
 
 const cues = [];
-const gains = {};
 for (const seg of segments) {
   const start = starts[seg.id];
   if (start === undefined) throw new Error(`no timeline start for ${seg.id}`);
   const a = analyse(path.join(ROOT, "assets", "audio", `${seg.id}.wav`));
-  // Loudness: bring every segment to −17 dB RMS, keeping peaks under −1 dBFS.
-  gains[seg.id] = Math.round(Math.min(10 ** ((-17 - a.rmsDb) / 20), 10 ** ((-1 - a.peakDb) / 20)) * 1000) / 1000;
 
   const parts = chunk(seg.text);
   const total = parts.reduce((n, p) => n + p.length, 0);
@@ -111,7 +108,6 @@ for (const seg of segments) {
 }
 
 writeFileSync(path.join(ROOT, "src", "cues.json"), JSON.stringify(cues, null, 2));
-writeFileSync(path.join(ROOT, "src", "gains.json"), JSON.stringify(gains, null, 2));
 const ts = (s) => {
   const ms = Math.round(s * 1000);
   const h = String(Math.floor(ms / 3600000)).padStart(2, "0");
@@ -122,4 +118,3 @@ const ts = (s) => {
 mkdirSync(path.join(ROOT, "subtitles"), { recursive: true });
 writeFileSync(path.join(ROOT, "subtitles", "recalliq-demo.srt"), cues.map((c, i) => `${i + 1}\n${ts(c.start)} --> ${ts(c.end)}\n${c.text}\n`).join("\n"));
 for (const c of cues) console.log(`${c.start.toFixed(2).padStart(7)} → ${c.end.toFixed(2).padStart(7)}  ${c.text}`);
-console.log("gains", JSON.stringify(gains));
