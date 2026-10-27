@@ -271,6 +271,12 @@ export function RunView({ initial }: { initial: RunDetail }) {
                       {usage.influence && <p className="mt-1 text-xs text-muted-foreground">Influence: {usage.influence}</p>}
                       {usage.decisionChanged && <p className="mt-1 text-xs font-medium text-primary">Changed decision: {usage.decisionChanged}</p>}
                       {usage.filterReason && <p className="mt-1 text-xs text-muted-foreground">{usage.filterReason}</p>}
+                      {usage.walrusBlobId && (
+                        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <span>Recalled from Walrus blob</span>
+                          <ChainId value={usage.walrusBlobId} href={walrusBlobUrl(usage.walrusBlobId)} head={8} tail={6} />
+                        </p>
+                      )}
                       <div className="mt-1 flex items-center gap-1">
                         {usage.distance !== null && (
                           <span className="font-mono text-xs text-muted-foreground tabular-nums">distance {Number(usage.distance).toFixed(3)}</span>
@@ -290,17 +296,18 @@ export function RunView({ initial }: { initial: RunDetail }) {
                 <div className="space-y-2">
                   <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Lessons from this run</h3>
                   {detail.memoriesWritten.map((m) => (
-                    <Link
-                      key={m.id}
-                      href={`/memory/${m.id}`}
-                      className="block rounded-lg border p-3 text-sm transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      <p>{m.summary}</p>
-                      <div className="mt-1.5 flex items-center gap-2">
+                    <div key={m.id} className="rounded-lg border p-3 text-sm">
+                      <Link
+                        href={`/memory/${m.id}`}
+                        className="rounded hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {m.summary}
+                      </Link>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2">
                         <StorageBadge status={m.storageStatus} />
-                        {m.walrusBlobId && <span className="truncate font-mono text-xs text-muted-foreground">{m.walrusBlobId.slice(0, 12)}…</span>}
+                        {m.walrusBlobId && <ChainId value={m.walrusBlobId} href={walrusBlobUrl(m.walrusBlobId)} head={8} tail={6} />}
                       </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               )}

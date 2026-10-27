@@ -13,6 +13,20 @@ import { cn } from "@/lib/utils";
 import { SafeText } from "./safe-text";
 import type { RunDetail } from "./types";
 
+/** "key: value · key: value" for a recorded assertion or observation (scalar fields only), or "" when there are none. */
+function fieldsOf(value: unknown, skip: string[] = []): string {
+  if (!value || typeof value !== "object") return "";
+  return Object.entries(value as Record<string, unknown>)
+    .filter(([k, v]) => !skip.includes(k) && v !== null && ["string", "number", "boolean"].includes(typeof v))
+    .map(([k, v]) => `${k}: ${String(v)}`)
+    .join(" · ");
+}
+
+/** The verifier stores `{ observed, diagnosis }`; older rows may hold the observation directly. */
+function observedOf(value: unknown): unknown {
+  return value && typeof value === "object" && "observed" in value ? (value as { observed: unknown }).observed : value;
+}
+
 const KIND_LABEL: Record<string, string> = {
   observation: "Observation",
   verified_fact: "Verified fact",
@@ -171,6 +185,16 @@ export function ResultPanel({ detail, onEvidence, onRefresh }: { detail: RunDeta
                             <p>
                               <span className="font-medium">Method:</span> {v.verificationMethod}
                             </p>
+                            {fieldsOf(v.assertion, ["type", "digest"]) && (
+                              <p className="wrap-anywhere">
+                                <span className="font-medium">Asserted:</span> <span className="font-mono">{fieldsOf(v.assertion, ["type", "digest"])}</span>
+                              </p>
+                            )}
+                            {fieldsOf(observedOf(v.observed)) && (
+                              <p className="wrap-anywhere">
+                                <span className="font-medium">Observed:</span> <span className="font-mono">{fieldsOf(observedOf(v.observed))}</span>
+                              </p>
+                            )}
                             {v.detail && (
                               <p>
                                 <span className="font-medium">Result:</span> {v.detail}

@@ -45,7 +45,7 @@ export function InfluenceTrace({ trace }: { trace: TraceInput }) {
         <>
           <span className="font-medium">{trace.failure.category.replace(/_/g, " ")}</span>
           {trace.failure.confirmedCause && <span className="block text-muted-foreground">{trace.failure.confirmedCause}</span>}
-          <Link href={`/workspace/run/${trace.failure.runId}`} className="text-primary underline-offset-4 hover:underline">
+          <Link href={`/workspace/run/${trace.failure.runId}`} className="block text-primary underline-offset-4 hover:underline">
             Source investigation
           </Link>
         </>
@@ -62,7 +62,7 @@ export function InfluenceTrace({ trace }: { trace: TraceInput }) {
       done: trace.verification?.status === "CONTRADICTED",
       body: trace.verification ? (
         <>
-          <span className="block">
+          <span className="block wrap-anywhere">
             Claim {trace.verification.claimRef}: “{trace.verification.claim}”
           </span>
           <span className="block text-muted-foreground">

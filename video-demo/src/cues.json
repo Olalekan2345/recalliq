@@ -1,0 +1,232 @@
+[
+  {
+    "start": 1.12,
+    "end": 3.92,
+    "text": "Most AI agents can solve a task today."
+  },
+  {
+    "start": 3.95,
+    "end": 7.86,
+    "text": "But when they get something wrong, a bad assumption, the wrong tool,"
+  },
+  {
+    "start": 7.89,
+    "end": 10.21,
+    "text": "does any of that carry over to tomorrow?"
+  },
+  {
+    "start": 10.24,
+    "end": 11.42,
+    "text": "Usually not."
+  },
+  {
+    "start": 11.45,
+    "end": 13.67,
+    "text": "Every session starts from zero."
+  },
+  {
+    "start": 15,
+    "end": 16.48,
+    "text": "This is RecallIQ."
+  },
+  {
+    "start": 16.51,
+    "end": 20.69,
+    "text": "It's an AI agent that investigates real Sui Mainnet activity through Tatum,"
+  },
+  {
+    "start": 20.72,
+    "end": 22.543,
+    "text": "checks every claim against fresh chain data,"
+  },
+  {
+    "start": 22.573,
+    "end": 24.81,
+    "text": "and keeps what it learns in Walrus Memory."
+  },
+  {
+    "start": 24.84,
+    "end": 26.83,
+    "text": "So the next session starts smarter."
+  },
+  {
+    "start": 28.92,
+    "end": 30.18,
+    "text": "Let's ask it something new:"
+  },
+  {
+    "start": 30.21,
+    "end": 32.23,
+    "text": "what has this address been doing?"
+  },
+  {
+    "start": 32.26,
+    "end": 35.74,
+    "text": "First, it recalls six relevant lessons from Walrus."
+  },
+  {
+    "start": 35.77,
+    "end": 39.53,
+    "text": "Then WorthIt picks the tools, free Tatum tools first."
+  },
+  {
+    "start": 40.36,
+    "end": 44.27,
+    "text": "Every call reads live Sui data through Tatum's gRPC gateway,"
+  },
+  {
+    "start": 44.3,
+    "end": 46.69,
+    "text": "and everything it reads becomes evidence."
+  },
+  {
+    "start": 46.72,
+    "end": 48.37,
+    "text": "When the agent reports back,"
+  },
+  {
+    "start": 48.4,
+    "end": 51.36,
+    "text": "each claim is re-checked against a fresh chain read."
+  },
+  {
+    "start": 51.39,
+    "end": 53.07,
+    "text": "All five verified."
+  },
+  {
+    "start": 54.18,
+    "end": 56.4,
+    "text": "And here's why it worked that way:"
+  },
+  {
+    "start": 56.43,
+    "end": 60.91,
+    "text": "the lessons it applied, each one recalled from a Walrus blob."
+  },
+  {
+    "start": 62.6,
+    "end": 64.32,
+    "text": "One of them came from a real mistake."
+  },
+  {
+    "start": 64.35,
+    "end": 67.45,
+    "text": "A few days earlier, in another session,"
+  },
+  {
+    "start": 67.48,
+    "end": 69.96,
+    "text": "the agent asserted a gas amount with the wrong sign,"
+  },
+  {
+    "start": 69.99,
+    "end": 71.94,
+    "text": "and the chain contradicted it."
+  },
+  {
+    "start": 71.97,
+    "end": 77.1,
+    "text": "The Agent Autopsy diagnosed an unsupported claim and turned it into a rule:"
+  },
+  {
+    "start": 77.13,
+    "end": 80.87,
+    "text": "every fact needs evidence and a checkable assertion."
+  },
+  {
+    "start": 81.94,
+    "end": 84.5,
+    "text": "That lesson was written to Walrus Mainnet."
+  },
+  {
+    "start": 84.53,
+    "end": 89.53,
+    "text": "Here's the exact text it stored, and here's its blob, on Walruscan."
+  },
+  {
+    "start": 91.68,
+    "end": 94.51,
+    "text": "Later that day, a completely different question."
+  },
+  {
+    "start": 94.54,
+    "end": 99.72,
+    "text": "RecallIQ brought that lesson back from Walrus, and it isn't just context,"
+  },
+  {
+    "start": 99.75,
+    "end": 101.5,
+    "text": "it's an enforced policy."
+  },
+  {
+    "start": 101.53,
+    "end": 105.88,
+    "text": "The agent's first report was rejected because three claims lacked evidence."
+  },
+  {
+    "start": 105.91,
+    "end": 108.97,
+    "text": "The agent fixed them, and all four verified."
+  },
+  {
+    "start": 111.54,
+    "end": 113.48,
+    "text": "WorthIt decides what's worth paying for."
+  },
+  {
+    "start": 113.51,
+    "end": 117.37,
+    "text": "It ranks tools by relevance and by reliability measured on real runs."
+  },
+  {
+    "start": 117.4,
+    "end": 121.82,
+    "text": "A paid specialist is only offered when its expected benefit clears the bar."
+  },
+  {
+    "start": 121.85,
+    "end": 123.51,
+    "text": "Here it didn't, so nothing was spent."
+  },
+  {
+    "start": 123.54,
+    "end": 125.044,
+    "text": "When one is worth it,"
+  },
+  {
+    "start": 125.074,
+    "end": 128.35,
+    "text": "you approve the exact x402 payment on Sui in your own wallet,"
+  },
+  {
+    "start": 128.38,
+    "end": 132.37,
+    "text": "and RecallIQ confirms the settlement on chain before using the result."
+  },
+  {
+    "start": 134.78,
+    "end": 137.04,
+    "text": "The Learning Lab traces every lesson,"
+  },
+  {
+    "start": 137.07,
+    "end": 140.56,
+    "text": "from the failure that created it to the decisions it changed."
+  },
+  {
+    "start": 140.59,
+    "end": 144.93,
+    "text": "RecallIQ brings persistent memory, verified blockchain data,"
+  },
+  {
+    "start": 144.96,
+    "end": 147.62,
+    "text": "and cost-aware decisions into one agent."
+  },
+  {
+    "start": 147.65,
+    "end": 152.09,
+    "text": "Because software should learn from experience, not start over every time."
+  }
+]
