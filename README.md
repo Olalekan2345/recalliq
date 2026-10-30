@@ -6,7 +6,6 @@ RecallIQ is an evidence-driven investigation agent for **Sui Mainnet**. Ask it a
 
 - **Live app:** https://recalliq-seven.vercel.app
 - **Live integration status:** https://recalliq-seven.vercel.app/api/integrations/health
-- **Hackathon:** Walrus × Tatum "Total Recall", track _Smart Agents for Real Life_ (also _Best Walrus Memory_ and _Best Use of Agent Payments_)
 
 ---
 
