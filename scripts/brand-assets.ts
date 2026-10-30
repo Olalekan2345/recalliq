@@ -11,9 +11,10 @@
  *     src/app/apple-icon.png           180×180 on white (iOS home screen)
  *     src/app/opengraph-image.png      1200×630 full logo on the frosted brand surface (link previews)
  *     public/brand/mascots/*.webp      mascot artwork cropped from assets/brand/mascot-sheet.png
+ *                                      (the source sheet is not distributed; the committed crops are)
  * - Prints sampled brand colours.
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -143,14 +144,18 @@ const MASCOTS: Record<string, [number, number, number, number]> = {
   cyber: [1133, 718, 1331, 969],
 };
 const SHEET = path.join(root, "assets", "brand", "mascot-sheet.png");
-mkdirSync(path.join(root, "public", "brand", "mascots"), { recursive: true });
-for (const [name, [x0, y0, x1, y1]] of Object.entries(MASCOTS)) {
-  await sharp(SHEET)
-    .extract({ left: x0, top: y0, width: x1 - x0, height: y1 - y0 })
-    .webp({ quality: 90 })
-    .toFile(path.join(root, "public", "brand", "mascots", `${name}.webp`));
+if (existsSync(SHEET)) {
+  mkdirSync(path.join(root, "public", "brand", "mascots"), { recursive: true });
+  for (const [name, [x0, y0, x1, y1]] of Object.entries(MASCOTS)) {
+    await sharp(SHEET)
+      .extract({ left: x0, top: y0, width: x1 - x0, height: y1 - y0 })
+      .webp({ quality: 90 })
+      .toFile(path.join(root, "public", "brand", "mascots", `${name}.webp`));
+  }
+  console.log(`Wrote ${Object.keys(MASCOTS).length} mascot crops to public/brand/mascots/`);
+} else {
+  console.log("Mascot sheet not present: keeping the committed crops in public/brand/mascots/");
 }
-console.log(`Wrote ${Object.keys(MASCOTS).length} mascot crops to public/brand/mascots/`);
 writeFileSync(path.join(root, "src", "app", "opengraph-image.alt.txt"), "RecallIQ logo — a walrus inside a magnifying-glass Q");
 
 // Sample brand colours (average of a small patch) from the opaque mark.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { canonicalNumber, findUngroundedValues, GroundingCorpus } from "@/lib/ai/verification/grounding";
-import { fixtureAddress, fixtureDigest } from "../helpers/fake-chain";
+import { fixtureAddress, fixtureDigest } from "../helpers/fixture-chain";
 
 const WALLET = fixtureAddress("wallet-b");
 const TX1 = fixtureDigest("recent-1");
@@ -55,11 +55,11 @@ describe("answer grounding", () => {
   });
 
   it("flags invented digests, addresses and amounts", () => {
-    const fake = fixtureDigest("never-fetched");
+    const unfetched = fixtureDigest("never-fetched");
     const stranger = fixtureAddress("stranger");
-    const ungrounded = findUngroundedValues(`Sent 1.5 SUI and 2,000 WAL to ${stranger} in ${fake}; 7 atomic units of gas.`, corpus());
+    const ungrounded = findUngroundedValues(`Sent 1.5 SUI and 2,000 WAL to ${stranger} in ${unfetched}; 7 atomic units of gas.`, corpus());
     expect(ungrounded).toEqual([
-      { kind: "digest", value: fake },
+      { kind: "digest", value: unfetched },
       { kind: "address", value: stranger },
       { kind: "amount", value: "1.5 SUI" },
       { kind: "amount", value: "2,000 WAL" },

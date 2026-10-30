@@ -35,10 +35,8 @@ public/references/
 # Vercel CLI project link
 .vercel
 
-# demo video production: sources are committed, heavy media is not
-video-demo/node_modules
-video-demo/assets/captures
-video-demo/assets/audio/*.wav
-video-demo/assets/music
-video-demo/exports/*.mp4
-video-demo/out
+# local-only material (working notes, media production, source artwork, tool-generated files)
+.local/
+video-demo/
+assets/brand/mascot-sheet.png
+AGENTS.md

@@ -15,7 +15,7 @@ import { executeRun } from "@/lib/ai/orchestrator/run-agent";
 import { parseTask } from "@/lib/ai/planning/task";
 import { newId } from "@/lib/security/ids";
 import { createUser, setupTestDb } from "../helpers/db";
-import { FakeChain, fixtureDigest, fixtureTx } from "../helpers/fake-chain";
+import { FixtureChain, fixtureDigest, fixtureTx } from "../helpers/fixture-chain";
 import type { Database } from "@/lib/db/client";
 
 const D = fixtureDigest("robustness");
@@ -106,7 +106,7 @@ function useModel(recoverOnReportOnly: boolean) {
 beforeAll(async () => {
   ({ db, close } = await setupTestDb());
   userId = await createUser(db);
-  setChainOverride(new FakeChain().addTx(fixtureTx({ digest: D })));
+  setChainOverride(new FixtureChain().addTx(fixtureTx({ digest: D })));
   setMemoryStoreOverride(null);
 });
 afterAll(async () => {

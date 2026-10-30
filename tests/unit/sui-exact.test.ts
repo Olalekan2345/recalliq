@@ -8,7 +8,7 @@ import { toBase64 } from "@mysten/sui/utils";
 import { decodePaymentTransaction, settleSuiExactPayment, verifySuiExactPayment } from "@/lib/payments/x402/sui-exact";
 import type { PaymentPayload, PaymentRequirements } from "@/lib/payments/x402/types";
 import { verifySettlement } from "@/lib/payments/verification/settlement";
-import { buildOfflinePayment, FakeChain } from "../helpers/fake-chain";
+import { buildOfflinePayment, FixtureChain } from "../helpers/fixture-chain";
 
 const PAY_TO = "0x" + "a".repeat(64);
 const REQ: PaymentRequirements = { scheme: "exact", network: "sui:mainnet", amount: "10000000", asset: "0x2::sui::SUI", payTo: PAY_TO, maxTimeoutSeconds: 300 };
@@ -23,33 +23,33 @@ async function signedPayload(amount = 10_000_000n, payTo = PAY_TO, signer = new 
 describe("x402 exact on Sui — verification", () => {
   it("accepts a correctly signed exact payment", async () => {
     const { payload, signer } = await signedPayload();
-    const r = await verifySuiExactPayment(new FakeChain(), payload, REQ);
+    const r = await verifySuiExactPayment(new FixtureChain(), payload, REQ);
     expect(r).toMatchObject({ isValid: true, payer: signer.toSuiAddress(), observedAmountAtomic: "10000000" });
   });
 
   it("rejects a signature from a different key", async () => {
     const { payload } = await signedPayload();
     const other = await signedPayload();
-    const r = await verifySuiExactPayment(new FakeChain(), { ...payload, payload: { ...payload.payload, signature: other.payload.payload.signature } }, REQ);
+    const r = await verifySuiExactPayment(new FixtureChain(), { ...payload, payload: { ...payload.payload, signature: other.payload.payload.signature } }, REQ);
     expect(r.invalidReason).toBe("invalid_exact_sui_payload_signature");
   });
 
   it("rejects wrong amounts, wrong recipients and mismatched terms", async () => {
-    expect((await verifySuiExactPayment(new FakeChain(), (await signedPayload(9_999_999n)).payload, REQ)).invalidReason).toBe(
+    expect((await verifySuiExactPayment(new FixtureChain(), (await signedPayload(9_999_999n)).payload, REQ)).invalidReason).toBe(
       "invalid_exact_sui_payload_amount_mismatch",
     );
-    expect((await verifySuiExactPayment(new FakeChain(), (await signedPayload(10_000_000n, "0x" + "b".repeat(64))).payload, REQ)).invalidReason).toBe(
+    expect((await verifySuiExactPayment(new FixtureChain(), (await signedPayload(10_000_000n, "0x" + "b".repeat(64))).payload, REQ)).invalidReason).toBe(
       "invalid_exact_sui_payload_recipient_mismatch",
     );
     const { payload } = await signedPayload();
-    expect((await verifySuiExactPayment(new FakeChain(), { ...payload, accepted: { ...REQ, amount: "1" } }, REQ)).invalidReason).toBe(
+    expect((await verifySuiExactPayment(new FixtureChain(), { ...payload, accepted: { ...REQ, amount: "1" } }, REQ)).invalidReason).toBe(
       "invalid_payment_requirements",
     );
-    expect((await verifySuiExactPayment(new FakeChain(), payload, { ...REQ, network: "sui:testnet" })).invalidReason).toBe("invalid_network");
+    expect((await verifySuiExactPayment(new FixtureChain(), payload, { ...REQ, network: "sui:testnet" })).invalidReason).toBe("invalid_network");
   });
 
   it("prevents replay of an already executed payment", async () => {
-    const chain = new FakeChain();
+    const chain = new FixtureChain();
     const { payload } = await signedPayload();
     const settled = await settleSuiExactPayment(chain, payload, REQ);
     expect(settled.success).toBe(true);
@@ -58,7 +58,7 @@ describe("x402 exact on Sui — verification", () => {
   });
 
   it("reports an ambiguous broadcast as settlement_pending with the local digest", async () => {
-    const chain = new FakeChain();
+    const chain = new FixtureChain();
     chain.failExecute = "ambiguous";
     const { payload, bytes } = await signedPayload();
     const r = await settleSuiExactPayment(chain, payload, REQ);
@@ -69,7 +69,7 @@ describe("x402 exact on Sui — verification", () => {
 
 describe("independent settlement verification", () => {
   it("marks settled only when recipient, asset and exact amount are confirmed on chain", async () => {
-    const chain = new FakeChain();
+    const chain = new FixtureChain();
     const { payload, signer } = await signedPayload();
     const s = await settleSuiExactPayment(chain, payload, REQ);
     const ok = await verifySettlement(chain, {

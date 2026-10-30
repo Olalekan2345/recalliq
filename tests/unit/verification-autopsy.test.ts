@@ -2,14 +2,14 @@ import { describe, expect, it } from "vitest";
 import { VerificationContext, verifyAssertion, verifyClaim } from "@/lib/ai/verification/engine";
 import { runAutopsy, type AutopsyClaim } from "@/lib/ai/reflection/autopsy";
 import { checkPolicies, type FinalReportInput } from "@/lib/ai/orchestrator/run-agent";
-import { FakeChain, fixtureAddress, fixtureDigest, fixtureTx, SUI, USDC } from "../helpers/fake-chain";
+import { FixtureChain, fixtureAddress, fixtureDigest, fixtureTx, SUI, USDC } from "../helpers/fixture-chain";
 
 const D = fixtureDigest("transfer");
 const SENDER = fixtureAddress("alice");
 const RECEIVER = fixtureAddress("bob");
 
 function chainWithTransfer() {
-  return new FakeChain().addTx(
+  return new FixtureChain().addTx(
     fixtureTx({
       digest: D,
       sender: SENDER,

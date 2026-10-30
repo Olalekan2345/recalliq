@@ -34,12 +34,12 @@ import {
   PaymentAuthorizationError,
 } from "@/server/services/payments";
 import { createUser, setupTestDb } from "../helpers/db";
-import { FakeChain, fixtureAddress, fixtureDigest, fixtureTx, SUI } from "../helpers/fake-chain";
+import { FixtureChain, fixtureAddress, fixtureDigest, fixtureTx, SUI } from "../helpers/fixture-chain";
 import type { Database } from "@/lib/db/client";
 
 let db: Database;
 let close: () => Promise<void>;
-let chain: FakeChain;
+let chain: FixtureChain;
 let userId: string;
 
 const PAY_TO = "0x" + "a".repeat(64);
@@ -80,7 +80,7 @@ afterAll(async () => {
   await close();
 });
 beforeEach(() => {
-  chain = new FakeChain()
+  chain = new FixtureChain()
     .addTx(fixtureTx({ digest: D1, balanceChanges: [{ address: fixtureAddress("bob"), coinType: SUI, amountAtomic: "1000000000" }] }))
     .addTx(fixtureTx({ digest: D2, status: "failure", balanceChanges: [] }));
   setChainOverride(chain);

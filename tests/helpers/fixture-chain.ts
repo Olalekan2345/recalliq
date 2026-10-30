@@ -84,7 +84,7 @@ function parsePayment(bytes: Uint8Array): { sender: string; recipient: string; a
   return { sender: normalizeSuiAddress(data.sender!), recipient: normalizeSuiAddress(recipient), amount };
 }
 
-export class FakeChain implements ChainClient {
+export class FixtureChain implements ChainClient {
   readonly txs = new Map<string, NormalizedTransaction>();
   readonly coins = new Map<string, { decimals: number | null; symbol: string | null }>([
     [SUI, { decimals: 9, symbol: "SUI" }],

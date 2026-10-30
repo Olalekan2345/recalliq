@@ -22,7 +22,7 @@ import { createEvaluation, runEvaluation } from "@/lib/ai/evaluation/harness";
 import { parseTask } from "@/lib/ai/planning/task";
 import { newId } from "@/lib/security/ids";
 import { createUser, setupTestDb } from "../helpers/db";
-import { FakeChain, fixtureAddress, fixtureDigest, fixtureTx, SUI } from "../helpers/fake-chain";
+import { FixtureChain, fixtureAddress, fixtureDigest, fixtureTx, SUI } from "../helpers/fixture-chain";
 import type { Database } from "@/lib/db/client";
 
 const D = fixtureDigest("learning-transfer");
@@ -114,7 +114,7 @@ beforeAll(async () => {
   ({ db, close } = await setupTestDb());
   userId = await createUser(db);
   setChainOverride(
-    new FakeChain().addTx(
+    new FixtureChain().addTx(
       fixtureTx({
         digest: D,
         balanceChanges: [
